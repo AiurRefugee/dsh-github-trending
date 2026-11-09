@@ -46,6 +46,23 @@ dsh plugin --profile desktop add link:$PWD
 
 > ⚠️ **不要和 `dsh-github-flow` 同时加载**：两者都注册 `github_trending` 工具、都占用侧边栏入口，会互相抢占。换用时先 `dsh plugin --profile desktop remove dsh-github-flow`。
 
+## 启动故障修复与检查
+
+如果 DSH 显示“启动时没能加载，未能运行”，请确认已安装包含启动修复的新版本，而不是本地旧的 `lib/` 编译文件。此前插件在注册 HTTP 路由时直接读取 `ctx.get('webServer')`，没有先声明 Cordis 注入依赖；这可能使插件在启动阶段抛出“未注入服务”的错误。现在 WebServer、Tools 和 Commands 均采用 `ctx.inject` 的可选服务加载机制，在没有 WebServer 的 CLI/TUI profile 里不会因此失败。
+
+从 GitHub 更新并重建本地安装：
+
+```bash
+git pull origin main
+pnpm install --frozen-lockfile
+pnpm run build
+pnpm test
+```
+
+如使用链接安装，重新启动 DSH 以加载新的 `lib/main.js`。如使用 GitHub 直装或打包安装，请重新安装最新版源码，不要只刷新浏览器页面。若仍失败，查看 DSH 的启动日志中的原始异常（尤其是 `Cannot find module`、`without inject`、`duplicate`），以区分依赖缺失、注入依赖和重复插件。
+
+`pnpm test` 包含真实的 `lib/main.js` 加载测试，模拟缺少可选 WebServer / Commands 的宿主，防止再次将只通过 TypeScript 编译、却无法在 Cordis 中激活的版本发布。
+
 ## 功能
 
 - 🔥 **六字段榜单**：`name / url / description / language / stars / starsToday`，日 / 周 / 月三档独立缓存。
