@@ -1,0 +1,49 @@
+{
+  "name": "dsh-github-trending",
+  "version": "0.1.0",
+  "description": "GitHub 热点看板：一次 Firecrawl 抓取同时得到榜单、中文译文与总结，并提供 Agent 工具与 /trending 指令。",
+  "icon": "icon.svg",
+  "type": "module",
+  "main": "./lib/main.js",
+  "exports": {
+    ".": "./lib/main.js",
+    "./entry": "./lib/main.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "client.js",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node test/run.mjs",
+    "prepare": "pnpm run build"
+  },
+  "keywords": ["dsh-plugin", "deepseek-harness", "github", "trending", "firecrawl"],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "entry": "./client.js"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.4"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.4",
+    "@types/node": "^26.6.3",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.5"
+  }
+}
