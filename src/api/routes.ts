@@ -57,8 +57,7 @@ function guardLocalWrite(req: any, res: any, opts: { requireJson?: boolean } = {
   return true;
 }
 
-export function registerTrendingRoutes(ctx: any, service: TrendingService, settings: FirecrawlSettings): void {
-  const webServer = typeof ctx?.get === 'function' ? ctx.get('webServer') : undefined;
+export function registerTrendingRoutes(ctx: any, service: TrendingService, settings: FirecrawlSettings, webServer: any): void {
   if (!webServer || typeof webServer.register !== 'function') return;
 
   const bind = (route: any) => {
