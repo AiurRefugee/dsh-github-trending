@@ -118,6 +118,25 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
     assert.doesNotMatch(routeCode, /ctx\??\.get\(['"]webServer['"]\)/);
     assert.match(routeCode, /registerTrendingRoutes\(/);
   }
+  // Import the actual deployed entry and simulate a DSH profile without any optional services.
+  const plugin = await import('../lib/main.js');
+  assert.equal(plugin.name, 'dsh-github-trending');
+  const injections = [];
+  const context = {
+    effect(fn) { return fn(); },
+    inject(names, fn) {
+      injections.push(names[0]);
+      if (names[0] === 'tools') {
+        fn({ get(name) { assert.equal(name, 'tools'); return { register(tool) {
+          assert.equal(tool.name, 'github_trending');
+        } }; } });
+      }
+      // webServer / commands are unavailable here; Cordis invokes those later when ready.
+    },
+    get() { throw new Error('root context cannot access undeclared services'); },
+  };
+  assert.doesNotThrow(() => plugin.apply(context));
+  assert.deepEqual(injections, ['webServer', 'tools', 'commands']);
   const { registerTrendingRoutes } = await import('../lib/api/routes.js');
   const service = { status: () => ({ configured: false }) };
   const settings = { snapshot: () => ({ hasKey: false }) };
