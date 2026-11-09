@@ -101,4 +101,27 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   assert.equal(bad.kind, 'error');
 }
 
+// 5. Startup regression: the deployed entry uses the same injected-service contract as src.
+// This catches accidental releases of stale lib/*.js even when TypeScript compiles.
+{
+  const srcMain = fs.readFileSync(new URL('../src/main.ts', import.meta.url), 'utf8');
+  const builtMain = fs.readFileSync(new URL('../lib/main.js', import.meta.url), 'utf8');
+  const srcRoutes = fs.readFileSync(new URL('../src/api/routes.ts', import.meta.url), 'utf8');
+  const builtRoutes = fs.readFileSync(new URL('../lib/api/routes.js', import.meta.url), 'utf8');
+  for (const entry of [srcMain, builtMain]) {
+    assert.match(entry, /ctx\.inject\(\['webServer'\]/);
+    assert.match(entry, /ctx\.inject\(\['tools'\]/);
+    assert.match(entry, /ctx\.inject\(\['commands'\]/);
+    assert.doesNotMatch(entry, /const tools\s*=\s*ctx\.tools/);
+  }
+  for (const routeCode of [srcRoutes, builtRoutes]) {
+    assert.doesNotMatch(routeCode, /ctx\??\.get\(['"]webServer['"]\)/);
+    assert.match(routeCode, /registerTrendingRoutes\(/);
+  }
+  const { registerTrendingRoutes } = await import('../lib/api/routes.js');
+  const service = { status: () => ({ configured: false }) };
+  const settings = { snapshot: () => ({ hasKey: false }) };
+  // Service absent in CLI/TUI profiles: no eager lookup or exception.
+  registerTrendingRoutes({ get: () => { throw Error('undeclared service'); } }, service, settings, undefined);
+}
 console.log('dsh-github-trending: scrape+insight, cache, clock bound, routes, command — all passed.');
