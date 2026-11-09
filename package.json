@@ -24,7 +24,13 @@
     "test": "node test/run.mjs",
     "prepare": "pnpm run build"
   },
-  "keywords": ["dsh-plugin", "deepseek-harness", "github", "trending", "firecrawl"],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "github",
+    "trending",
+    "firecrawl"
+  ],
   "license": "MIT",
   "dsh": {
     "bundle": {
@@ -45,5 +51,17 @@
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "^3.18.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AiurRefugee/dsh-github-trending.git"
+  },
+  "homepage": "https://github.com/AiurRefugee/dsh-github-trending#readme",
+  "bugs": {
+    "url": "https://github.com/AiurRefugee/dsh-github-trending/issues"
+  },
+  "author": "AiurRefugee",
+  "publishConfig": {
+    "access": "public"
   }
 }

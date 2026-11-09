@@ -1,48 +1,83 @@
+<div align="center">
+
 # dsh-github-trending
 
-GitHub 热点看板插件：一次 Firecrawl 请求同时拿到榜单、中文译文与总结，并提供 Agent 工具 `github_trending` 与 `/trending` 指令。
+**给 DeepSeek Harness 加一块 GitHub 热点看板：一次 Firecrawl 请求同时拿到榜单、中文译文与总结。**
+
+[![npm version](https://img.shields.io/npm/v/dsh-github-trending?color=4d6bfe&logo=npm&label=npm)](https://www.npmjs.com/package/dsh-github-trending)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-github-trending?color=4d6bfe)](https://www.npmjs.com/package/dsh-github-trending)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/AiurRefugee/dsh-github-trending)](https://github.com/AiurRefugee/dsh-github-trending)
+[![DSH Plugin](https://img.shields.io/badge/DeepSeek%20Harness-plugin-4d6bfe.svg)](https://github.com/AiurRefugee/dsh-github-trending)
+
+</div>
+
+> 从 [`dsh-github-flow`](https://github.com/ItQianChen/dsh-github-flow) 的热点看板功能拆出来的独立插件：同一份榜单数据，不再需要 gh 登录，也不需要工作区仓库。
+
+## 这是什么
+
+GitHub Trending 每天都在变，但 DSH 里想看一眼今天什么项目在涨，得先装整套 GitHub 工作流插件、配好 `gh`、切到对应仓库。这个插件只做一件事：**把热点看板单独拿出来**。
+
+- 一个工具 `github_trending`，让 Agent 直接查榜
+- 一条 `/trending` 指令，人类随手看一眼
+- 一块常驻看板，日 / 周 / 月三档切换，中英双语简介，右侧带趋势洞察
+
+## 界面预览
+
+<!-- 放一张看板截图到 docs/board.png，然后把下面这行换成图片 -->
+
+> TODO: `docs/board.png`
 
 ## 安装
 
 ```bash
+# 从 npm 装（发布后可用）
 dsh plugin --profile desktop add dsh-github-trending
+
+# 或从 GitHub 直装
+dsh plugin --profile desktop add github:AiurRefugee/dsh-github-trending
 ```
 
-或本地源码：
+装完**重启一次 DeepSeek Harness**。之后的源码改动交给 [`dsh-live-reload`](https://github.com/Monter-code/dsh-live-reload) 热更新即可，不必反复重启。
+
+本地源码调试：
 
 ```bash
-git clone <repo> && cd dsh-github-trending
-pnpm install && pnpm run build
+git clone https://github.com/AiurRefugee/dsh-github-trending.git
+cd dsh-github-trending
+pnpm install     # 触发 prepare → tsc
+pnpm test
 dsh plugin --profile desktop add link:$PWD
 ```
 
-装完重启一次 DeepSeek Harness；之后的源码改动由 `dsh-live-reload` 热更新（若已安装）。
-
-> 本插件与 `dsh-github-flow` 的「热点看板」功能重叠，**不要同时加载两者**：它们都会注册 `github_trending` 工具并争夺同一批槽位。
+> ⚠️ **不要和 `dsh-github-flow` 同时加载**：两者都注册 `github_trending` 工具、都占用侧边栏入口，会互相抢占。换用时先 `dsh plugin --profile desktop remove dsh-github-flow`。
 
 ## 功能
 
-- **六字段榜单**：`name / url / description / language / stars / starsToday`，日 / 周 / 月三档。
-- **中英双语简介**：表格中的简介可在原文与中文译文间切换，缺译文时回退原文。
-- **右侧趋势洞察**：总结 + 3–5 条观察，与榜单同一次响应返回。
-- **Agent 工具**：`github_trending({ period: 'daily' | 'weekly' | 'monthly' | 'all' })`。
-- **Slash 指令**：`/trending [daily|weekly|monthly|all]`，默认 `daily`。
+- 🔥 **六字段榜单**：`name / url / description / language / stars / starsToday`，日 / 周 / 月三档独立缓存。
+- 🌏 **中英双语简介**：表格里一键切换，译文缺失时自动回退原文。
+- ✦ **右侧趋势洞察**：总结 + 3–5 条观察，**与榜单同一次响应返回**，不额外消耗第二次请求。
+- 🧰 **Agent 工具**：`github_trending({ period: 'daily' | 'weekly' | 'monthly' | 'all' })`，支持 `read_only` 档位。
+- ⌨️ **Slash 指令**：`/trending [daily|weekly|monthly|all]`，默认 `daily`。
+- ⚡ **零后台消耗**：没有定时抓取；除手动刷新外，所有入口都先命中缓存。
 
-## 抓取模式
+## 抓取模式与额度
 
 | 模式 | 接口 | 单周期消耗 | 耗时 | 条数 |
-| --- | --- | --- | --- | --- |
+| --- | --- | ---: | ---: | ---: |
 | `scrape`（默认） | `/v2/scrape` 的 JSON 抽取 | 约 5 credits | 约 40s | 约 9 |
 | `agent` | `/v2/agent` + 轮询 | 24–39 credits | 约 100s | 约 15 |
 
-在插件页面「设置 → 抓取模式」切换，保存到 `~/.dsh/data/dsh-github-trending/firecrawl-settings.json`。未在界面选过时回落到 plugin config 的 `trendingSource`。
+在 **看板 → 设置 → 抓取模式** 里切换，选择会持久化到 `~/.dsh/data/dsh-github-trending/firecrawl-settings.json` 并立即生效；切换会清空缓存，因为两种模式产出的榜单不可复用。
+
+`scrape` 模式下右侧洞察也由同一次抽取产出，**任何路径都不会调用 Agent**；`agent` 模式下榜单与洞察都由 Agent 任务产出，只有任务失败时才自动降级到 scrape 并在 `warning` 里说明。
 
 ## 缓存
 
-- 默认 3 小时（`trendingCacheTtlMs`），按周期独立。
-- 落盘到 `~/.dsh/data/dsh-github-trending/trending-cache/<period>.json`（0600，tmp+rename 原子写），热重载与重启都不丢。
-- 唯一穿透缓存的是点「刷新」；其余入口（挂载、切周期、工具、指令）先过缓存。
-- 读取落盘文件时重新走六字段校验；损坏、版本不符或时钟回拨导致的负 age 都按「无缓存」处理。
+- 默认 **3 小时**（`trendingCacheTtlMs`），按周期独立。
+- 落盘到 `~/.dsh/data/dsh-github-trending/trending-cache/<period>.json`，权限 `0600`，`tmp → rename` 原子写，热重载和重启都不丢。
+- 文件读取时重新走六字段校验；损坏、版本标记不符、以及时钟回拨造成的负缓存年龄，一律按「无缓存」处理并重新抓取。
+- 只有看板上的「刷新」会穿透缓存，其余入口（挂载、切周期、工具、指令）都先过缓存。
 
 ## 配置
 
@@ -52,13 +87,20 @@ dsh plugin --profile desktop add link:$PWD
   config:
     trendingSource: scrape        # scrape | agent
     trendingCacheTtlMs: 10800000  # 3 小时
-    trendingTimeoutMs: 60000
+    trendingTimeoutMs: 60000      # 单次 HTTP 请求超时
     trendingAgentTimeoutMs: 180000
     trendingAgentMaxCredits: 300
     firecrawlBaseUrl: https://api.firecrawl.dev
 ```
 
-`firecrawlBaseUrl` 也可用 `FIRECRAWL_BASE_URL`；API Key 用 `FIRECRAWL_API_KEY` 或在插件设置里保存。自托管仅支持 Scrape 时请保持 `scrape` 模式。
+| 项 | 说明 |
+| --- | --- |
+| `trendingSource` | 仅在设置面板里没选过时生效 |
+| `trendingCacheTtlMs` | 榜单缓存时长，`0` 表示每次重新抓取 |
+| `trendingAgentMaxCredits` | 单次 Agent 任务的额度上限，防止卡死烧额度 |
+| `firecrawlBaseUrl` | 自托管服务根地址（不带 `/v2/scrape`），也可用 `FIRECRAWL_BASE_URL` |
+
+API Key 有两条来源：看板设置面板保存（推荐，存服务端、不回显），或进程环境变量 `FIRECRAWL_API_KEY`。自托管仅支持 Scrape 的部署请保持 `scrape` 模式。
 
 ## 开发
 
@@ -68,8 +110,22 @@ pnpm run build   # tsc → lib/
 pnpm test        # node test/run.mjs
 ```
 
-浏览器半边 `client.js` 是手写零构建文件，不需要编译；宿主半边由 `tsc` 编译到 `lib/`。
+- 宿主半边 `src/**/*.ts` 由 `tsc` 编译到 `lib/`。
+- 浏览器半边 `client.js` 是手写的零构建文件，通过 `window.__ModuleLoader__` 注册到 `main` 槽与侧边栏，不需要编译。
+- 测试覆盖：抓取+洞察同响应、缓存命中与落盘复用、时钟回拨边界、路由同源守卫、`/trending` 指令。
 
-## 许可
+## 卸载
 
-MIT
+```bash
+dsh plugin --profile desktop remove dsh-github-trending
+rm -rf ~/.dsh/data/dsh-github-trending   # 需要一并清掉 Key 与缓存时
+```
+
+## 链接
+
+- 上游插件：[ItQianChen/dsh-github-flow](https://github.com/ItQianChen/dsh-github-flow)
+- 问题反馈：[Issues](https://github.com/AiurRefugee/dsh-github-trending/issues)
+
+## License
+
+[MIT](LICENSE)
