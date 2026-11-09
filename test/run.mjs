@@ -65,10 +65,10 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   const { registerTrendingRoutes } = await import('../lib/api/routes.js');
   const bound = new Map();
   const webServer = { exact: new Map(), prefixes: new Map(), register: (route) => { bound.set(route.path, route.handler); return () => {}; } };
-  const ctx = { get: () => webServer, effect: (fn) => { const dispose = fn(); return typeof dispose === 'function' ? dispose : () => {}; } };
+  const ctx = { get: () => { throw new Error('undeclared service access'); }, effect: (fn) => { const dispose = fn(); return typeof dispose === 'function' ? dispose : () => {}; } };
   const settings = { snapshot: () => ({ hasKey: true, trendingSource: 'scrape' }), save: () => ({ trendingSource: 'scrape' }), key: () => 'k' };
   const service = new TrendingService({ apiKey: 'k', source: 'scrape' }, async () => json({ success: true, data: { json: { repositories: [row], summary: 's', observations: ['o'] } } }));
-  registerTrendingRoutes(ctx, service, settings);
+  registerTrendingRoutes(ctx, service, settings, webServer);
   assert.deepEqual([...bound.keys()].sort(), ['/api/github-trending/settings', '/api/github-trending/trending']);
 
   const handler = bound.get('/api/github-trending/trending');
