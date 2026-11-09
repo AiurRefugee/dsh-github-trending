@@ -42,10 +42,18 @@ export function apply(ctx: Context, config: Config = Config({}) as Config) {
   });
   ctx.effect(() => () => trending.dispose());
 
-  registerTrendingRoutes(ctx, trending, settings);
+  // Cordis protects service access: never ctx.get('webServer') without injection.
+  // Optional services must not block this plugin from starting in minimal profiles.
+  ctx.inject(['webServer'], (scope: any) => {
+    registerTrendingRoutes(scope, trending, settings, scope.get('webServer'));
+  });
 
-  const tools = (ctx as Context & { tools?: { register?: (tool: unknown) => void } }).tools;
-  if (tools && typeof tools.register === 'function') tools.register(createTrendingTool(trending));
+  ctx.inject(['tools'], (scope: any) => {
+    const tools = scope.get('tools');
+    if (tools && typeof tools.register === 'function') {
+      tools.register(createTrendingTool(trending));
+    }
+  });
 
   ctx.inject(['commands'], (scope: any) => {
     registerTrendingCommand(scope.get('commands'), trending);
