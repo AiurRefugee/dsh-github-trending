@@ -246,7 +246,7 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
     assert.ok(root[1].includes(property), 'main panel requires ' + property);
   }
   // A width:100% content-box root plus padding overflows its host viewport.
-  const layout = css.match(/\\.dsh-trending-body\\{([^}]+)\\}/);
+  const layout = css.match(/\.dsh-trending-body\{([^}]+)\}/);
   assert.ok(layout && layout[1].includes('max-width:100%'), 'two-column layout must not enlarge the root');
   const table = css.match(/\.dsh-trending-table-scroll\{([^}]+)\}/);
   assert.ok(table && table[1].includes('overflow-x:auto'), 'wide tables must retain horizontal scrolling');
