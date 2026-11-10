@@ -240,12 +240,12 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   vm.runInNewContext(source, { window: browser, document: doc }, { filename: 'client.js' });
   entry.apply({ effect(callback) { callback(); }, slots: { inject() {} } });
   const css = styles.join('\n');
-  const root = css.match(/\\.dsh-trending-panel\\{([^}]+)\\}/);
+  const root = css.match(/\.dsh-trending-panel\{([^}]+)\}/);
   assert.ok(root, 'main panel scroll styles are injected');
   for (const property of ['height:100%', 'min-height:0', 'overflow-y:auto', 'overflow-x:hidden']) {
     assert.ok(root[1].includes(property), 'main panel requires ' + property);
   }
-  const table = css.match(/\\.dsh-trending-table-scroll\\{([^}]+)\\}/);
+  const table = css.match(/\.dsh-trending-table-scroll\{([^}]+)\}/);
   assert.ok(table && table[1].includes('overflow-x:auto'), 'wide tables must retain horizontal scrolling');
 }
 console.log('dsh-github-trending: scrape+insight, cache, clock bound, routes, command — all passed.');
