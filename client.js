@@ -207,7 +207,7 @@
 
     if (ctx.slots && typeof ctx.slots.inject === 'function') {
       ctx.slots.inject('sidebar.panellist', function () {
-        return ctx.slots.register({ name: 'sidebar.panellist', id: 'github-trending', order: 21, label: 'Trending' }, SidebarIcon);
+        return ctx.slots.register({ name: 'sidebar.panellist', id: 'trending', order: 21, label: 'Trending' }, SidebarIcon);
       });
       ctx.slots.inject('main', function () {
         return ctx.slots.register({ name: 'main', key: 'trending' }, Panel);
