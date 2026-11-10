@@ -242,9 +242,12 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   const css = styles.join('\n');
   const root = css.match(/\.dsh-trending-panel\{([^}]+)\}/);
   assert.ok(root, 'main panel scroll styles are injected');
-  for (const property of ['height:100%', 'min-height:0', 'overflow-y:auto', 'overflow-x:hidden']) {
+  for (const property of ['box-sizing:border-box', 'width:100%', 'max-width:100%', 'height:100%', 'min-height:0', 'overflow-y:auto', 'overflow-x:hidden']) {
     assert.ok(root[1].includes(property), 'main panel requires ' + property);
   }
+  // A width:100% content-box root plus padding overflows its host viewport.
+  const layout = css.match(/\\.dsh-trending-body\\{([^}]+)\\}/);
+  assert.ok(layout && layout[1].includes('max-width:100%'), 'two-column layout must not enlarge the root');
   const table = css.match(/\.dsh-trending-table-scroll\{([^}]+)\}/);
   assert.ok(table && table[1].includes('overflow-x:auto'), 'wide tables must retain horizontal scrolling');
 }
