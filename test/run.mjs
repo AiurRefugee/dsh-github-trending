@@ -223,4 +223,29 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   assert.equal(all(render(), n => n.props.role === 'dialog').length, 0, 'close button dismisses dialog');
 }
 
+// 8. DSH main slot is height-constrained; a long table must remain vertically scrollable.
+{
+  const vm = await import('node:vm');
+  const source = fs.readFileSync(new URL('../client.js', import.meta.url), 'utf8');
+  const styles = [];
+  const doc = {
+    getElementById() { return null; },
+    createElement(tag) { assert.equal(tag, 'style'); return { id: '', textContent: '' }; },
+    head: { appendChild(el) { styles.push(el.textContent); } },
+  };
+  let entry;
+  const browser = { document: doc, __ModuleLoader__: { load(def) {
+    entry = def.factory(() => ({ createElement() {} }));
+  } } };
+  vm.runInNewContext(source, { window: browser, document: doc }, { filename: 'client.js' });
+  entry.apply({ effect(callback) { callback(); }, slots: { inject() {} } });
+  const css = styles.join('\n');
+  const root = css.match(/\\.dsh-trending-panel\\{([^}]+)\\}/);
+  assert.ok(root, 'main panel scroll styles are injected');
+  for (const property of ['height:100%', 'min-height:0', 'overflow-y:auto', 'overflow-x:hidden']) {
+    assert.ok(root[1].includes(property), 'main panel requires ' + property);
+  }
+  const table = css.match(/\\.dsh-trending-table-scroll\\{([^}]+)\\}/);
+  assert.ok(table && table[1].includes('overflow-x:auto'), 'wide tables must retain horizontal scrolling');
+}
 console.log('dsh-github-trending: scrape+insight, cache, clock bound, routes, command — all passed.');
