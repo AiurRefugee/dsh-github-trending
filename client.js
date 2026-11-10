@@ -128,6 +128,8 @@
       var [key, setKey] = React.useState('');
       var [mode, setMode] = React.useState('scrape');
       var [message, setMessage] = React.useState('');
+      var [settingsBusy, setSettingsBusy] = React.useState(false);
+      var dialogRef = React.useRef(null);
 
       var load = React.useCallback(async function (target, refresh) {
         setBusy(true);
@@ -166,6 +168,8 @@
       }, []);
 
       var saveSettings = async function (payload) {
+        if (settingsBusy) return;
+        setSettingsBusy(true);
         setMessage('');
         try {
           var res = await fetch(API + '/settings', {
@@ -176,80 +180,163 @@
           if (!res.ok || !json.ok) throw new Error(json.error || '保存失败');
           setConfigured(json.data.hasKey);
           if (json.data.trendingSource) setMode(json.data.trendingSource);
-          setMessage('已保存');
+          setMessage('设置已保存');
           if (json.data.hasKey) load(period, true);
         } catch (e) {
           setMessage(e && e.message ? e.message : '保存失败');
+        } finally {
+          setSettingsBusy(false);
         }
       };
+
+      React.useEffect(function () {
+        if (!settingsOpen) return;
+        var previous = document.activeElement;
+        var onKey = function (event) {
+          if (event.key === 'Escape') { event.preventDefault(); setSettingsOpen(false); }
+          if (event.key !== 'Tab' || !dialogRef.current) return;
+          var focusable = dialogRef.current.querySelectorAll('button:not(:disabled),input:not(:disabled),[tabindex]:not([tabindex="-1"])');
+          if (!focusable.length) return;
+          var first = focusable[0], last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        };
+        document.addEventListener('keydown', onKey);
+        if (dialogRef.current) dialogRef.current.focus();
+        return function () {
+          document.removeEventListener('keydown', onKey);
+          if (previous && typeof previous.focus === 'function') previous.focus();
+        };
+      }, [settingsOpen]);
 
       var board = boards[period];
       var insight = board && board.insight;
 
+      var table = board ? h('div', { className: 'dsh-trending-body' },
+        h('div', { className: 'dsh-trending-table-card' },
+          h('div', { className: 'dsh-trending-table-scroll' },
+            h('table', { className: 'dsh-trending-table' },
+              h('thead', null, h('tr', null,
+                h('th', null, '项目'), h('th', null, '项目简介'), h('th', null, '语言'),
+                h('th', { className: 'dsh-trending-num' }, '总 Star'),
+                h('th', { className: 'dsh-trending-num' }, '周期新增'))),
+              h('tbody', null, board.items.map(function (row) {
+                var translated = insight && insight.descriptionsZh && insight.descriptionsZh[row.name];
+                var description = zh && translated ? translated : row.description;
+                return h('tr', { key: row.name },
+                  h('td', null, h('a', { className: 'dsh-trending-name', href: row.url, target: '_blank', rel: 'noopener noreferrer' }, row.name)),
+                  h('td', { className: 'dsh-trending-desc', lang: zh && translated ? 'zh-CN' : undefined }, description || '—'),
+                  h('td', null, row.language || '—'),
+                  h('td', { className: 'dsh-trending-num' }, count(row.stars)),
+                  h('td', { className: 'dsh-trending-num dsh-trending-gain' }, row.starsToday === null ? '—' : '+' + count(row.starsToday)));
+              }))))),
+        h('aside', { className: 'dsh-trending-aside', 'aria-label': 'AI 趋势洞察' },
+          h('div', { className: 'dsh-trending-aside-head' },
+            h('span', { className: 'dsh-trending-spark', 'aria-hidden': true }, '✦'),
+            h('div', null,
+              h('h3', null, 'AI 趋势洞察'),
+              h('div', { className: 'dsh-trending-aside-meta' }, 'FIRECRAWL · ' + ({ daily: '每日', weekly: '每周', monthly: '每月' }[period])))),
+          insight ? h('div', null,
+            h('h4', null, '趋势总结'),
+            h('p', null, insight.summary),
+            insight.observations && insight.observations.length ?
+              h('div', null, h('h4', null, '观察与发现'),
+                h('ol', null, insight.observations.map(function (item, index) {
+                  return h('li', { key: index }, item);
+                }))) : null) :
+            h('p', { className: 'dsh-trending-msg' }, '本次抓取暂无趋势总结。'))) : null;
+
+      var settingsDialog = settingsOpen ? h('div', {
+        className: 'dsh-trending-modal-overlay',
+        onMouseDown: function (event) {
+          if (event.target === event.currentTarget) setSettingsOpen(false);
+        },
+      },
+        h('section', {
+          className: 'dsh-trending-dialog', role: 'dialog', 'aria-modal': true,
+          'aria-labelledby': 'dsh-trending-settings-title', tabIndex: -1, ref: dialogRef,
+          onMouseDown: function (event) { event.stopPropagation(); },
+        },
+          h('div', { className: 'dsh-trending-dialog-header' },
+            h('div', null,
+              h('span', { className: 'dsh-trending-dialog-eyebrow' }, 'PREFERENCES'),
+              h('h3', { id: 'dsh-trending-settings-title' }, '热点看板设置')),
+            h('button', { type: 'button', className: 'dsh-trending-dialog-close', 'aria-label': '关闭设置',
+              onClick: function () { setSettingsOpen(false); } }, '×')),
+          h('div', { className: 'dsh-trending-dialog-body' },
+            h('div', { className: 'dsh-trending-status' },
+              h('span', { className: 'dsh-trending-status-dot', style: configured ? null : { background: '#ff9f0a' } }),
+              configured ? 'Firecrawl API Key 已配置' : 'Firecrawl API Key 尚未配置'),
+            h('div', null,
+              h('label', { className: 'dsh-trending-field-label', htmlFor: 'dsh-trending-key' }, 'Firecrawl API Key'),
+              h('input', { id: 'dsh-trending-key', type: 'password', value: key,
+                autoComplete: 'off', spellCheck: false, placeholder: configured ? '已保存 · 留空则保留当前 Key' : 'fc-…',
+                onChange: function (event) { setKey(event.target.value); } }),
+              h('span', { className: 'dsh-trending-field-hint' }, '密钥仅保存在 DSH 服务端，不会显示在浏览器中。')),
+            h('div', null,
+              h('span', { className: 'dsh-trending-field-label' }, '抓取模式'),
+              h('div', { className: 'dsh-trending-modes', role: 'radiogroup', 'aria-label': 'Firecrawl 抓取模式' },
+                [['scrape', 'Scrape · 推荐', '一次提取榜单、中英简介与趋势总结，额度消耗较低。'],
+                 ['agent', 'Agent · 深度分析', '使用 Firecrawl Agent 执行完整抓取与分析，额度消耗较高。']].map(function (option) {
+                  return h('label', { key: option[0], className: 'dsh-trending-mode' + (mode === option[0] ? ' active' : '') },
+                    h('input', { type: 'radio', name: 'dsh-trending-mode', value: option[0],
+                      checked: mode === option[0], disabled: settingsBusy,
+                      onChange: function () { saveSettings({ source: option[0] }); } }),
+                    h('strong', null, option[1]), h('small', null, option[2]));
+                }))),
+            message ? h('p', { className: 'dsh-trending-dialog-msg', role: 'status' }, message) : null),
+          h('div', { className: 'dsh-trending-dialog-footer' },
+            h('button', { type: 'button', className: 'dsh-trending-btn', disabled: settingsBusy,
+              onClick: function () { saveSettings({ clear: true }); } }, '清除 Key'),
+            h('div', { className: 'dsh-trending-dialog-actions' },
+              h('button', { type: 'button', className: 'dsh-trending-btn',
+                onClick: function () { setSettingsOpen(false); } }, '关闭'),
+              h('button', { type: 'button', className: 'dsh-trending-btn dsh-trending-btn-primary',
+                disabled: settingsBusy || !key.trim(),
+                onClick: function () { var value = key; if (value.trim()) { saveSettings({ apiKey: value }); setKey(''); } } },
+                settingsBusy ? '保存中…' : '保存 Key'))))) : null;
+
       return h('div', { className: 'dsh-trending-panel' },
-        h('div', { className: 'dsh-trending-head' },
-          h('h2', null, 'GitHub 热点'),
-          h('div', { className: 'dsh-trending-tabs' },
+        h('header', { className: 'dsh-trending-head' },
+          h('div', { className: 'dsh-trending-headline' },
+            h('span', { className: 'dsh-trending-kicker' }, 'DISCOVER / OPEN SOURCE'),
+            h('h2', null, 'GitHub 热点'),
+            h('p', { className: 'dsh-trending-subtitle' }, '发现开源趋势，追踪值得关注的项目')),
+          h('div', { className: 'dsh-trending-head-actions' },
+            h('button', { className: 'dsh-trending-btn', type: 'button',
+              disabled: busy || !configured, onClick: function () { load(period, true); } }, busy ? '刷新中…' : '↻ 刷新榜单'),
+            h('button', { className: 'dsh-trending-btn', type: 'button', 'aria-label': '打开热点看板设置',
+              onClick: function () { setMessage(''); setSettingsOpen(true); } }, '⚙ 设置'))),
+        h('div', { className: 'dsh-trending-toolbar' },
+          h('div', { className: 'dsh-trending-tabs', role: 'tablist', 'aria-label': '榜单周期' },
             PERIODS.map(function (pair) {
-              return h('button', {
-                key: pair[0], className: 'dsh-trending-tab' + (period === pair[0] ? ' active' : ''),
-                onClick: function () { setPeriod(pair[0]); if (!boards[pair[0]] || pair[0] !== period) load(pair[0]); },
-              }, pair[1]);
+              return h('button', { key: pair[0], type: 'button', role: 'tab', 'aria-selected': period === pair[0],
+                className: 'dsh-trending-tab' + (period === pair[0] ? ' active' : ''),
+                onClick: function () { setPeriod(pair[0]); if (!boards[pair[0]]) load(pair[0]); } }, pair[1]);
             })),
-          h('div', { style: { display: 'flex', gap: '8px' } },
-            h('button', { className: 'dsh-trending-btn', onClick: function () { setZh(!zh); } }, zh ? '英文' : '中文'),
-            h('button', { className: 'dsh-trending-btn', disabled: busy || !configured, onClick: function () { load(period, true); } }, busy ? '抓取中…' : '刷新'),
-            h('button', { className: 'dsh-trending-btn', onClick: function () { setSettingsOpen(!settingsOpen); } }, '设置'))),
-
-        settingsOpen ? h('div', { className: 'dsh-trending-settings' },
-          h('label', null, 'Firecrawl API Key'),
-          h('input', {
-            type: 'password', value: key, placeholder: configured ? '已保存，留空则保留' : 'fc-…',
-            onChange: function (event) { setKey(event.target.value); },
-          }),
-          h('div', { className: 'dsh-trending-modes' },
-            [['scrape', 'Scrape', '一次抽取同时得到榜单、中文译文与总结，约 5 credits。'],
-             ['agent', 'Agent', '一次 Agent 任务，条数更多、洞察更丰富，约 24–39 credits。']].map(function (option) {
-              return h('label', { key: option[0], className: 'dsh-trending-mode' + (mode === option[0] ? ' active' : '') },
-                h('input', { type: 'radio', name: 'dsh-trending-mode', value: option[0], checked: mode === option[0],
-                  onChange: function () { saveSettings({ source: option[0] }); } }),
-                h('strong', null, option[1]),
-                h('small', null, option[2]));
-            })),
-          h('div', { style: { display: 'flex', gap: '8px' } },
-            h('button', { className: 'dsh-trending-btn', disabled: !key.trim(), onClick: function () { saveSettings({ apiKey: key }); setKey(''); } }, '保存 Key'),
-            h('button', { className: 'dsh-trending-btn', onClick: function () { saveSettings({ clear: true }); } }, '清除 Key')),
-          message ? h('p', { className: 'dsh-trending-msg' }, message) : null) : null,
-
-        !configured && configured !== null ? h('p', { className: 'dsh-trending-msg' }, '尚未配置 Firecrawl API Key') : null,
-        error ? h('p', { className: 'dsh-trending-msg', role: 'alert' }, error) : null,
-        busy && !board ? h('p', { className: 'dsh-trending-msg' }, '正在抓取…') : null,
-
-        board ? h('div', { className: 'dsh-trending-body' },
-          h('table', { className: 'dsh-trending-table' },
-            h('thead', null, h('tr', null,
-              h('th', null, '项目'), h('th', null, '简介'), h('th', null, '语言'),
-              h('th', { className: 'dsh-trending-num' }, 'Star'), h('th', { className: 'dsh-trending-num' }, '周期新增'))),
-            h('tbody', null, board.items.map(function (row) {
-              var translated = insight && insight.descriptionsZh && insight.descriptionsZh[row.name];
-              var text = zh && translated ? translated : row.description;
-              return h('tr', { key: row.name },
-                h('td', null, h('a', { className: 'dsh-trending-name', href: row.url, target: '_blank', rel: 'noopener noreferrer' }, row.name)),
-                h('td', { className: 'dsh-trending-desc' }, text || '—'),
-                h('td', null, row.language || '—'),
-                h('td', { className: 'dsh-trending-num' }, count(row.stars)),
-                h('td', { className: 'dsh-trending-num' }, row.starsToday === null ? '—' : '+' + count(row.starsToday)));
-            }))),
-          h('aside', { className: 'dsh-trending-aside' },
-            h('h3', null, 'AI 趋势洞察'),
-            insight
-              ? h('div', null,
-                  h('h4', null, '趋势总结'), h('p', null, insight.summary),
-                  insight.observations && insight.observations.length
-                    ? h('div', null, h('h4', null, '观察与发现'),
-                        h('ol', null, insight.observations.map(function (item, index) { return h('li', { key: index }, item); })))
-                    : null)
-              : h('p', { className: 'dsh-trending-msg' }, '本次抓取没有返回总结'))) : null);
+          h('div', { className: 'dsh-trending-language', role: 'group', 'aria-label': '项目简介语言' },
+            h('span', { className: 'dsh-trending-toolbar-label' }, '项目简介'),
+            h('button', { className: 'dsh-trending-locale' + (zh ? ' active' : ''), type: 'button',
+              'aria-pressed': zh, onClick: function () { setZh(true); } }, '中文'),
+            h('button', { className: 'dsh-trending-locale' + (!zh ? ' active' : ''), type: 'button',
+              'aria-pressed': !zh, onClick: function () { setZh(false); } }, 'English'))),
+        board ? h('div', { className: 'dsh-trending-meta' },
+          h('span', { className: 'dsh-trending-meta-dot', 'aria-hidden': true }),
+          h('span', null, String(board.items.length) + ' 个项目'),
+          h('span', null, '· ' + new Date(board.fetchedAt).toLocaleString('zh-CN') + (board.stale ? ' · 缓存数据' : '')),
+          h('a', { href: board.sourceUrl, target: '_blank', rel: 'noopener noreferrer' }, 'GitHub 原榜 ↗')) : null,
+        configured === false ? h('div', { className: 'dsh-trending-notice' },
+          h('strong', null, '需要配置 Firecrawl'),
+          h('p', null, '点击右上角「设置」添加 API Key，即可开始加载热点榜单。')) : null,
+        error ? h('div', { className: 'dsh-trending-notice', role: 'alert' }, error) : null,
+        busy && !board ? h('div', { className: 'dsh-trending-empty', role: 'status' },
+          h('span', { className: 'dsh-trending-empty-icon' }, '◌'), h('strong', null, '正在获取热点榜单…'),
+          h('span', { className: 'dsh-trending-msg' }, '正在通过 Firecrawl 提取 GitHub Trending 项目')) : null,
+        !board && !busy && configured ? h('div', { className: 'dsh-trending-empty' },
+          h('span', { className: 'dsh-trending-empty-icon' }, '✦'), h('strong', null, '暂无榜单数据'),
+          h('span', { className: 'dsh-trending-msg' }, '点击刷新榜单重新获取')) : null,
+        table,
+        settingsDialog);
     }
 
     function SidebarIcon() {
