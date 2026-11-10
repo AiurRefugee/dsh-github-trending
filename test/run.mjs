@@ -177,4 +177,50 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   assert.equal(typeof main.component, 'function');
 }
 
+
+// 7. Modal UI smoke test: settings is a dialog, not an inline form inside dashboard layout.
+{
+  const vm = await import('node:vm');
+  const code = fs.readFileSync(new URL('../client.js', import.meta.url), 'utf8');
+  let entry, state = [], cursor = 0;
+  const React = {
+    createElement(type, props, ...children) { return { type, props: props || {}, children: children.flat() }; },
+    useState(initial) {
+      const i = cursor++;
+      if (!(i in state)) state[i] = initial;
+      return [state[i], next => { state[i] = typeof next === 'function' ? next(state[i]) : next; }];
+    },
+    useCallback(fn) { return fn; },
+    useRef(value) { return { current: value }; },
+    useEffect() {},
+  };
+  const browser = { document: {}, __ModuleLoader__: { load(def) { entry = def.factory(() => React); } } };
+  vm.runInNewContext(code, { window: browser }, { filename: 'client.js' });
+  let Page;
+  entry.apply({ effect() {}, slots: { inject(_name, cb) { cb(); },
+    register(meta, component) { if (meta.name === 'main') Page = component; return () => {}; } } });
+  function render() { cursor = 0; return Page(); }
+  function all(node, filter, found = []) {
+    if (!node || typeof node !== 'object') return found;
+    if (filter(node)) found.push(node);
+    for (const child of node.children || []) all(child, filter, found);
+    return found;
+  }
+  let tree = render();
+  assert.equal(all(tree, n => n.props.role === 'dialog').length, 0, 'dialog is hidden by default');
+  const settingsButton = all(tree, n => n.props['aria-label'] === '打开热点看板设置')[0];
+  assert.ok(settingsButton, 'settings trigger exists in dashboard header');
+  settingsButton.props.onClick();
+  tree = render();
+  const dialog = all(tree, n => n.props.role === 'dialog')[0];
+  assert.ok(dialog, 'click opens a real accessible dialog');
+  assert.equal(dialog.props['aria-modal'], true);
+  assert.equal(dialog.props['aria-labelledby'], 'dsh-trending-settings-title');
+  assert.ok(all(dialog, n => n.type === 'input' && n.props.type === 'password').length === 1);
+  assert.equal(all(tree, n => n.props.className === 'dsh-trending-settings').length, 0,
+    'old inline settings panel is removed');
+  all(dialog, n => n.props['aria-label'] === '关闭设置')[0].props.onClick();
+  assert.equal(all(render(), n => n.props.role === 'dialog').length, 0, 'close button dismisses dialog');
+}
+
 console.log('dsh-github-trending: scrape+insight, cache, clock bound, routes, command — all passed.');
