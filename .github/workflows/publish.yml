@@ -1,0 +1,73 @@
+name: Publish npm package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, test and publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged release
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - name: Verify release version
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          test "${GITHUB_REF_NAME}" = "v${PACKAGE_VERSION}" || {
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match package.json v${PACKAGE_VERSION}"
+            exit 1
+          }
+          echo "Publishing dsh-github-trending@${PACKAGE_VERSION}"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Verify checked-in build artifacts
+        run: git diff --exit-code -- lib/
+
+      - name: Verify npm CLI supports OIDC
+        shell: bash
+        run: |
+          node --version
+          npm --version
+          npm --version | awk -F. '{ if ($1 < 11 || ($1 == 11 && $2 < 5)) exit 1 }'
+
+      - name: Inspect package contents
+        run: npm pack --dry-run --ignore-scripts
+
+      # Configure npmjs.com -> package Settings -> Trusted Publisher before pushing a release tag.
+      # Set GitHub owner AiurRefugee, repository dsh-github-trending, workflow publish.yml,
+      # leave environment blank, and allow direct npm publish.
+      - name: Publish to npm using OIDC
+        run: npm publish --access public --provenance
