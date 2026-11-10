@@ -125,6 +125,31 @@ pnpm test        # node test/run.mjs
 - 浏览器半边 `client.js` 是手写的零构建文件，通过 `window.__ModuleLoader__` 注册到 `main` 槽与侧边栏，不需要编译。
 - 测试覆盖：抓取+洞察同响应、缓存命中与落盘复用、时钟回拨边界、路由同源守卫、`/trending` 指令。
 
+## npm 自动发布
+
+首次发布已经由维护者手动完成；后续版本使用 GitHub Actions + npm Trusted Publishing (OIDC)，无需在 GitHub Secrets 中保存 npm 发布令牌。
+
+1. 登录 npm，进入 [dsh-github-trending 包页面](https://www.npmjs.com/package/dsh-github-trending) → **Settings** → **Trusted Publisher**，选择 **GitHub Actions**。
+2. 填写 GitHub 用户 `AiurRefugee`、仓库 `dsh-github-trending`、工作流文件名 `publish.yml`（不要填写完整路径）；Environment 留空，允许 **npm publish**。
+3. 修改并提交 `package.json` 版本号，同时执行 `pnpm run build && pnpm test`，将生成的 `lib/` 文件一起提交（CI 会检查产物与源码一致）。
+4. 在 `main` 的发布提交上创建并推送同版本 Git 标签，例如 `v0.1.1`。
+
+```bash
+# 已发布过的版本 0.1.0 不可重复发布；下面以 0.1.1 为例。
+npm version 0.1.1 --no-git-tag-version
+pnpm run build
+pnpm test
+git add package.json lib/
+git commit -m "chore: release v0.1.1"
+git push origin main
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+`.github/workflows/publish.yml` 将在推送标签时进行版本匹配、依赖安装、构建、测试、检查 `lib/`、检查 npm 打包内容，再通过 npm OIDC Trusted Publishing 发布公开包并生成 provenance。查看 [GitHub Actions](https://github.com/AiurRefugee/dsh-github-trending/actions)。
+
+**注意：** npm 的 Trusted Publisher 授权必须先配置好；只创建工作流不会自动赋予 npm 发布权限。请不要为已经发布的 `0.1.0` 再推送发布标签；首个自动发布版本应使用新的版本号。
+
 ## 卸载
 
 ```bash
