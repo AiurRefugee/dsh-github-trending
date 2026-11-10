@@ -143,4 +143,38 @@ const json = (data) => new Response(JSON.stringify(data), { headers: { 'content-
   // Service absent in CLI/TUI profiles: no eager lookup or exception.
   registerTrendingRoutes({ get: () => { throw Error('undeclared service'); } }, service, settings, undefined);
 }
+
+// 6. Sidebar navigation smoke test: the host resolves sidebar id via the main keyed slot.
+// Reproduce the real browser entry registration to detect mismatched keys before release.
+{
+  const vm = await import('node:vm');
+  const clientCode = fs.readFileSync(new URL('../client.js', import.meta.url), 'utf8');
+  let plugin;
+  const browser = { document: {}, __ModuleLoader__: { load(def) {
+    plugin = def.factory((id) => {
+      assert.equal(id, 'react');
+      return { createElement: () => ({}) };
+    });
+  } } };
+  vm.runInNewContext(clientCode, { window: browser }, { filename: 'client.js' });
+  assert.equal(plugin.name, 'dsh-github-trending');
+  const registered = [];
+  const ctx = {
+    effect: () => {},
+    slots: {
+      inject(name, register) { register(); },
+      register(meta, component) {
+        registered.push({ meta, component });
+        return () => {};
+      },
+    },
+  };
+  plugin.apply(ctx);
+  const sidebar = registered.find(item => item.meta.name === 'sidebar.panellist');
+  const main = registered.find(item => item.meta.name === 'main');
+  assert.ok(sidebar && main, 'both sidebar and main panel must be registered');
+  assert.equal(sidebar.meta.id, main.meta.key, 'sidebar id must match main key for DSH navigation');
+  assert.equal(typeof main.component, 'function');
+}
+
 console.log('dsh-github-trending: scrape+insight, cache, clock bound, routes, command — all passed.');
