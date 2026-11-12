@@ -16,7 +16,7 @@ let history;
 try { history = JSON.parse(await readFile(path.join(dir, 'history.json'), 'utf8')); }
 catch (error) { if (error.code !== 'ENOENT') throw error; history = { days: [] }; }
 if (!Array.isArray(history.days)) throw new Error('history.json 格式错误');
-const service = new TrendingService({ apiKey: process.env.FIRECRAWL_API_KEY, source: 'scrape' });
+const service = new TrendingService({ apiKey: process.env.FIRECRAWL_API_KEY, source: 'scrape', timeoutMs: 600_000 });
 const boards = {};
 for (const period of ['daily', 'weekly', 'monthly']) {
   const board = await service.get(period, true);
