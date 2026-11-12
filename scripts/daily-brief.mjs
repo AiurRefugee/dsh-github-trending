@@ -6,6 +6,9 @@ const dir = process.env.OUTPUT_DIR || 'daily-output';
 const key = process.env.MINIMAX_API_KEY;
 if (!key || !process.env.FIRECRAWL_API_KEY) throw new Error('请配置 MINIMAX_API_KEY 和 FIRECRAWL_API_KEY');
 const base = (process.env.MINIMAX_BASE_URL || 'https://api.minimax.io').replace(/\/$/, '');
+if (!['https://api.minimax.io', 'https://api.minimaxi.com'].includes(base)) {
+  throw new Error('MINIMAX_BASE_URL 必须是官方 HTTPS API 地址');
+}
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const cutoff = new Date(`${today}T00:00:00Z`).getTime() - 29 * 86400000;
 await mkdir(dir, { recursive: true });
@@ -27,7 +30,7 @@ days.push({ date: today, boards });
 days.sort ( (a, b) => a.date.localeCompare(b.date));
 
 async function post(endpoint, body) {
-  const response = await fetch(base + endpoint, { method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(180000) });
+  const response = await fetch(base + endpoint, { method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(180000) });
   if (!response.ok) throw new Error(`MiniMax ${endpoint} HTTP ${response.status}`);
   const json = await response.json();
   if (json.base_resp?.status_code) throw new Error(`MiniMax ${endpoint} error ${json.base_resp.status_code}`);
