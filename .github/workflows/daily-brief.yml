@@ -35,6 +35,9 @@ jobs:
             git fetch --no-tags origin refs/heads/daily-data
             test "$(git rev-parse FETCH_HEAD)" = "$(cat /tmp/daily-data-sha)"
             git show FETCH_HEAD:history.json > daily-output/history.json
+            if git cat-file -e FETCH_HEAD:episodes 2>/dev/null; then
+              git archive FETCH_HEAD episodes | tar -x -C daily-output
+            fi
           else
             status=$?
             if [ "$status" -ne 2 ]; then exit "$status"; fi
@@ -48,6 +51,7 @@ jobs:
           MINIMAX_TEXT_MODEL: ${{ vars.MINIMAX_TEXT_MODEL }}
           MINIMAX_SPEECH_MODEL: ${{ vars.MINIMAX_SPEECH_MODEL }}
           MINIMAX_VOICE_ID: ${{ vars.MINIMAX_VOICE_ID }}
+          PODCAST_SITE_URL: ${{ vars.PODCAST_SITE_URL }}
         run: node scripts/daily-brief.mjs
       - name: 保存滚动数据
         run: |
@@ -55,7 +59,7 @@ jobs:
           git init
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add history.json latest.md latest.mp3 index.html
+          git add history.json latest.md latest.mp3 index.html feed.xml episodes/
           git commit -m 'Update daily briefing'
           previous=$(cat /tmp/daily-data-sha)
           git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push \
