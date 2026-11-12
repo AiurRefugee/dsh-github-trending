@@ -1,0 +1,60 @@
+name: GitHub 热点语音日报
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: daily-brief
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 读取已有历史
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p daily-output
+          if gh api "repos/${GITHUB_REPOSITORY}/contents/history.json?ref=daily-data" --jq .content > /tmp/history-base64 2>/dev/null; then
+            base64 -d /tmp/history-base64 > daily-output/history.json
+          elif gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/daily-data" >/dev/null 2>&1; then
+            echo '历史分支存在但无法读取历史文件' >&2
+            exit 1
+          fi
+      - name: 生成日报和音频
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_BASE_URL: ${{ vars.MINIMAX_BASE_URL }}
+          MINIMAX_TEXT_MODEL: ${{ vars.MINIMAX_TEXT_MODEL }}
+          MINIMAX_SPEECH_MODEL: ${{ vars.MINIMAX_SPEECH_MODEL }}
+          MINIMAX_VOICE_ID: ${{ vars.MINIMAX_VOICE_ID }}
+        run: node scripts/daily-brief.mjs
+      - name: 保存滚动数据
+        run: |
+          cd daily-output
+          git init
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add history.json latest.md latest.mp3 index.html
+          git commit -m 'Update daily briefing'
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:daily-data
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: daily-output
+      - id: deploy
+        uses: actions/deploy-pages@v4
