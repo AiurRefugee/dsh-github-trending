@@ -2,7 +2,7 @@
 
 # dsh-github-trending
 
-**给 DeepSeek Harness 加一块 GitHub 热点看板：一次 Firecrawl 请求同时拿到榜单、中文译文与总结。**
+**GitHub 热点看板与中文语音日报：在 DeepSeek Harness 看榜单，用播客 RSS 收听精选项目。**
 
 [![npm version](https://img.shields.io/npm/v/dsh-github-trending?color=4d6bfe&logo=npm&label=npm)](https://www.npmjs.com/package/dsh-github-trending)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-github-trending?color=4d6bfe)](https://www.npmjs.com/package/dsh-github-trending)
@@ -14,9 +14,18 @@
 
 > 从 [`dsh-github-flow`](https://github.com/ItQianChen/dsh-github-flow) 的热点看板功能拆出来的独立插件：同一份榜单数据，不再需要 gh 登录，也不需要工作区仓库。
 
-## 这是什么
+## 每日速播与订阅
 
-GitHub Trending 每天都在变，但 DSH 里想看一眼今天什么项目在涨，得先装整套 GitHub 工作流插件、配好 `gh`、切到对应仓库。这个插件只做一件事：**把热点看板单独拿出来**。
+- [日报页面](https://aiurrefugee.github.io/dsh-github-trending/)
+- [播客 RSS](https://aiurrefugee.github.io/dsh-github-trending/feed.xml)
+- [最新 MP3 直链](https://aiurrefugee.github.io/dsh-github-trending/latest.mp3)
+- [最新文案](https://aiurrefugee.github.io/dsh-github-trending/latest.md)
+
+在 Apple 播客资料库中选择通过 URL 添加节目，粘贴 RSS 地址；也可使用其他支持 RSS 的播客应用。最新 MP3 地址始终指向最新一期；RSS 的每期音频有独立地址，保留最近 30 个自然日。同一天重新生成可能产生多集；过期音频将不可访问。节目从该功能启用后开始积累，不会自动补造旧节目。
+
+## DSH 插件
+
+在 DSH 内查看 GitHub Trending 榜单，无需 `gh` 登录或打开特定工作区。
 
 - 一个工具 `github_trending`，让 Agent 直接查榜
 - 一条 `/trending` 指令，人类随手看一眼
@@ -70,7 +79,7 @@ pnpm test
 - ✦ **右侧趋势洞察**：总结 + 3–5 条观察，**与榜单同一次响应返回**，不额外消耗第二次请求。
 - 🧰 **Agent 工具**：`github_trending({ period: 'daily' | 'weekly' | 'monthly' | 'all' })`，支持 `read_only` 档位。
 - ⌨️ **Slash 指令**：`/trending [daily|weekly|monthly|all]`，默认 `daily`。
-- ⚡ **零后台消耗**：没有定时抓取；除手动刷新外，所有入口都先命中缓存。
+- ⚡ **插件无定时抓取**：除手动刷新外，所有插件入口都先命中缓存；GitHub Actions 日报独立定时运行。
 
 ## 抓取模式与额度
 
@@ -119,9 +128,11 @@ API Key 有两条来源：看板设置面板保存（推荐，存服务端、不
 
 1. 在仓库 Settings → Secrets and variables → Actions 配置 `FIRECRAWL_API_KEY` 和 `MINIMAX_API_KEY`。Key 只放 Secrets，不要提交到仓库。
 2. Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。在默认分支包含工作流后，从 Actions 手动运行一次检查结果。
-3. 可选 Actions Variables：`MINIMAX_BASE_URL`（默认 `https://api.minimax.io`，仅允许该地址或 `https://api.minimaxi.com`）、`MINIMAX_TEXT_MODEL`、`MINIMAX_SPEECH_MODEL`、`MINIMAX_VOICE_ID`。国内账户需配置对应 API 地址，并确保密钥有文本和语音权限。
+3. 可选 Actions Variables：`MINIMAX_BASE_URL`（默认 `https://api.minimax.io`，仅允许该地址或 `https://api.minimaxi.com`）、`MINIMAX_TEXT_MODEL`、`MINIMAX_SPEECH_MODEL`、`MINIMAX_VOICE_ID`、`PODCAST_SITE_URL`。国内账户需配置对应 API 地址，并确保密钥有文本和语音权限。自定义域名可用 `PODCAST_SITE_URL` 配置 HTTPS 站点根地址；更换根地址会改变节目 URL。
 
-成功发布后，首页为 `https://aiurrefugee.github.io/dsh-github-trending/`，音频直链为 `https://aiurrefugee.github.io/dsh-github-trending/latest.mp3`。缓存可能导致更新短时间内未生效。仅发布最新文案与音频；历史快照在 `history.json`。`daily-data` 为专用生成数据分支，每次更新会重建历史，不要在该分支存放其他内容。生成失败不会替换现有内容；如保存成功但 Pages 部署失败，请重跑工作流。Pages 内容为公开内容。
+成功发布后，RSS、首页和音频地址见上方。缓存可能导致更新短时间内未生效。榜单、节目元数据保存在 `history.json`，节目音频保存在 `episodes/`；`daily-data` 为专用生成数据分支，每次更新会重建 Git 历史，不要在该分支存放其他内容。生成失败不会替换现有内容；如保存成功但 Pages 部署失败，重跑工作流会重新抓取并生成。Pages 内容均公开。
+
+Firecrawl 抽取可能遗漏 GitHub 原榜项目，页面展示的是实际抓取结果。GitHub Pages 有空间和流量限制；直接通过 RSS 订阅与上架 Apple Podcasts 目录不同，上架还需满足封面等要求。
 
 ## 开发
 
