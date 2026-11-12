@@ -1,0 +1,71 @@
+name: GitHub 热点语音日报
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: daily-brief
+  cancel-in-progress: false
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: 读取已有历史
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p daily-output
+          if git ls-remote --exit-code origin refs/heads/daily-data > /tmp/daily-data-ref; then
+            cut -f1 /tmp/daily-data-ref > /tmp/daily-data-sha
+            git fetch --no-tags origin refs/heads/daily-data
+            test "$(git rev-parse FETCH_HEAD)" = "$(cat /tmp/daily-data-sha)"
+            git show FETCH_HEAD:history.json > daily-output/history.json
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then exit "$status"; fi
+            : > /tmp/daily-data-sha
+          fi
+      - name: 生成日报和音频
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_BASE_URL: ${{ vars.MINIMAX_BASE_URL }}
+          MINIMAX_TEXT_MODEL: ${{ vars.MINIMAX_TEXT_MODEL }}
+          MINIMAX_SPEECH_MODEL: ${{ vars.MINIMAX_SPEECH_MODEL }}
+          MINIMAX_VOICE_ID: ${{ vars.MINIMAX_VOICE_ID }}
+        run: node scripts/daily-brief.mjs
+      - name: 保存滚动数据
+        run: |
+          cd daily-output
+          git init
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add history.json latest.md latest.mp3 index.html
+          git commit -m 'Update daily briefing'
+          previous=$(cat /tmp/daily-data-sha)
+          git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push \
+            --force-with-lease="refs/heads/daily-data:${previous}" \
+            "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/daily-data
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: daily-output
+      - id: deploy
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
