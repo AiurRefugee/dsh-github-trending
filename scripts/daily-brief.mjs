@@ -18,15 +18,17 @@ catch (error) { if (error.code !== 'ENOENT') throw error; history = { days: [] }
 if (!Array.isArray(history.days)) throw new Error('history.json 格式错误');
 const service = new TrendingService({ apiKey: process.env.FIRECRAWL_API_KEY, source: 'scrape', timeoutMs: 600_000 });
 const boards = {};
+const descriptionsZh = {};
 for (const period of ['daily', 'weekly', 'monthly']) {
   const board = await service.get(period, true);
   if (board.stale) throw new Error(`${period} 榜单过期`);
   boards[period] = board.items;
+  descriptionsZh[period] = board.insight?.descriptionsZh ?? {};
 }
 service.dispose();
 const days = history.days.filter(d => typeof d.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.date)
   && Date.parse(`${d.date}T00:00:00Z`) >= cutoff && d.date < today);
-days.push({ date: today, boards });
+days.push({ date: today, boards, descriptionsZh });
 days.sort ( (a, b) => a.date.localeCompare(b.date));
 
 async function post(endpoint, body) {
