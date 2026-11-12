@@ -113,15 +113,13 @@ pnpm test
 
 API Key 有两条来源：看板设置面板保存（推荐，存服务端、不回显），或进程环境变量 `FIRECRAWL_API_KEY`。自托管仅支持 Scrape 的部署请保持 `scrape` 模式。
 
-## 开发
-
 ## 每日语音简报
 
 `.github/workflows/daily-brief.yml` 在北京时间每天 06:00 计划执行，也可在 Actions 手动运行。它复用榜单服务，使用 MiniMax 生成中文文案和 MP3，`history.json` 保留最近 30 个自然日的日、周、月榜单。周榜和月榜的 `starsToday` 分别表示该周期新增星数。运行延迟由 GitHub Actions 决定。
 
 1. 在仓库 Settings → Secrets and variables → Actions 配置 `FIRECRAWL_API_KEY` 和 `MINIMAX_API_KEY`。Key 只放 Secrets，不要提交到仓库。
 2. Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。在默认分支包含工作流后，从 Actions 手动运行一次检查结果。
-3. 可选 Actions Variables：`MINIMAX_BASE_URL`（默认 `https://api.minimax.io`）、`MINIMAX_TEXT_MODEL`、`MINIMAX_SPEECH_MODEL`、`MINIMAX_VOICE_ID`。国内账户需配置对应 API 地址，并确保密钥有文本和语音权限。
+3. 可选 Actions Variables：`MINIMAX_BASE_URL`（默认 `https://api.minimax.io`，仅允许该地址或 `https://api.minimaxi.com`）、`MINIMAX_TEXT_MODEL`、`MINIMAX_SPEECH_MODEL`、`MINIMAX_VOICE_ID`。国内账户需配置对应 API 地址，并确保密钥有文本和语音权限。
 
 成功发布后，首页为 `https://aiurrefugee.github.io/dsh-github-trending/`，音频直链为 `https://aiurrefugee.github.io/dsh-github-trending/latest.mp3`。缓存可能导致更新短时间内未生效。仅发布最新文案与音频；历史快照在 `history.json`。`daily-data` 为专用生成数据分支，每次更新会重建历史，不要在该分支存放其他内容。生成失败不会替换现有内容；如保存成功但 Pages 部署失败，请重跑工作流。Pages 内容为公开内容。
 
