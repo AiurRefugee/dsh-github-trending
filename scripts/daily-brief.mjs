@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { TrendingService } from '../lib/trending/service.js';
+import { publishPodcast } from './podcast-feed.mjs';
 
 const dir = process.env.OUTPUT_DIR || 'daily-output';
 const key = process.env.MINIMAX_API_KEY;
@@ -26,6 +27,7 @@ for (const period of ['daily', 'weekly', 'monthly']) {
   descriptionsZh[period] = board.insight?.descriptionsZh ?? {};
 }
 service.dispose();
+const previousEpisodes = history.days.find(d => d.date === today)?.episodes ?? [];
 const days = history.days.filter(d => typeof d.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d.date)
   && Date.parse(`${d.date}T00:00:00Z`) >= cutoff && d.date < today);
 days.push({ date: today, boards, descriptionsZh });
@@ -56,8 +58,13 @@ const speech = await post('/v1/t2a_v2', {
 });
 const hex = speech.data?.audio;
 if (typeof hex !== 'string' || !/^(?:[0-9a-fA-F]{2})+$/.test(hex)) throw new Error('MiniMax 未返回有效音频');
+const audio = Buffer.from(hex, 'hex');
+const siteUrl = process.env.PODCAST_SITE_URL || (process.env.GITHUB_REPOSITORY
+  ? `https://${process.env.GITHUB_REPOSITORY.split('/')[0].toLowerCase()}.github.io/${process.env.GITHUB_REPOSITORY.split('/')[1]}/`
+  : 'https://aiurrefugee.github.io/dsh-github-trending/');
+await publishPodcast({ dir, days, today, article, audio, previousEpisodes, siteUrl });
 await writeFile(path.join(dir, 'history.json'), JSON.stringify({ days }, null, 2) + '\n');
 await writeFile(path.join(dir, 'latest.md'), article + '\n');
-await writeFile(path.join(dir, 'latest.mp3'), Buffer.from(hex, 'hex'));
+await writeFile(path.join(dir, 'latest.mp3'), audio);
 await writeFile(path.join(dir, 'index.html'), await readFile(new URL('./daily-page.html', import.meta.url), 'utf8'));
 console.log(`生成完成：${today}，保留 ${days.length} 天`);
