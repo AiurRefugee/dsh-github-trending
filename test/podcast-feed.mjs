@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, readFile, readdir } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { publishPodcast } from '../scripts/podcast-feed.mjs';
+
+const dir = await mkdtemp(path.join(os.tmpdir(), 'podcast-feed-test-'));
+const siteUrl = 'https://example.com/demo/';
+const first = { date: '2026-11-12', boards: {} };
+await publishPodcast({ dir, days:[first], today:first.date, article:'功能 <介绍> & 测试', audio:Buffer.from('first'), siteUrl, now:new Date('2026-11-12T00:00:00Z') });
+let xml = await readFile(path.join(dir, 'feed.xml'), 'utf8');
+assert.match(xml, /功能 &lt;介绍&gt; &amp; 测试/);
+assert.match(xml, /length="5" type="audio\/mpeg"/);
+const second = { date:'2026-11-13', boards:{} };
+await publishPodcast({ dir, days:[first, second], today:second.date, article:'第二期', audio:Buffer.from('second'), siteUrl, now:new Date('2026-11-13T00:00:00Z') });
+xml = await readFile(path.join(dir, 'feed.xml'), 'utf8');
+assert.equal((xml.match(/<item>/g) || []).length, 2);
+assert.equal((await readdir(path.join(dir,'episodes'))).length, 2);
+const repeat = { date:second.date, boards:{} };
+await publishPodcast({ dir, days:[repeat], today:repeat.date, article:'第二期', audio:Buffer.from('second'), previousEpisodes:second.episodes, siteUrl, now:new Date('2026-11-13T01:00:00Z') });
+assert.equal((await readdir(path.join(dir,'episodes'))).length, 1);
+assert.equal(repeat.episodes[0].publishedAt, '2026-11-13T00:00:00.000Z');
+console.log('podcast RSS tests passed');
