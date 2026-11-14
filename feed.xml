@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub 热点速播</title><link>https://aiurrefugee.github.io/dsh-github-trending/</link><description>每天用中文介绍 GitHub 热点项目。</description><language>zh-cn</language><atom:link href="https://aiurrefugee.github.io/dsh-github-trending/feed.xml" rel="self" type="application/rss+xml"/><item><title>GitHub 热点速播 · 2026-11-14</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-14-2ba5f32a7bed329f10bcc873cf0cb92e784562f9e4fcf82ddd74aea51071c249.mp3</guid><pubDate>Sat, 14 Nov 2026 02:01:02 GMT</pubDate><description>2026年11月14日，今天我们关注 GitHub 热门榜上正在完善的 AI 代理工作流，以及代码审查、浏览器操作和长期记忆等实用工具。
+
+日榜中，阿里巴巴的 open-code-review 值得关注。它采用确定性流程结合大语言模型代理进行代码审查，可给出精确到代码行的评论，并内置空指针、线程安全、跨站脚本和 SQL 注入等多语言规则。Chrome 现代 Web 指南则帮助编码代理掌握最新的 Web 开发实践，过去几天持续出现在日榜。Codex Security 同样保持关注，它提供命令行工具和开发工具包，用于发现、验证并修复安全漏洞。
+
+日榜和周榜同时出现了 daily_stock_analysis。这是一套由大语言模型驱动的多市场股票分析系统，整合多来源行情、实时新闻、决策看板和自动推送，也支持定时运行，适合搭建个人投研工作流。
+
+到了周榜，Agent Browser 专注于代理的浏览器自动化，让代理能够直接操作网页；它同时进入了月榜。Cloudflare 安全审计技能则支持多阶段审计，并输出经过独立验证、便于机器读取的结果，过去几天持续出现在周榜和月榜。
+
+月榜中的 Claude Mem 专注于跨会话记忆。它会记录代理在会话中的操作，再经过压缩，将相关上下文注入后续任务，帮助不同会话延续工作。
+
+整体来看，热门项目的重点正从单纯生成代码，转向让代理具备更可靠的审查、操作、记忆和上下文能力，AI 工具链正在加速融入真实的软件工作流程。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-14-2ba5f32a7bed329f10bcc873cf0cb92e784562f9e4fcf82ddd74aea51071c249.mp3" length="2056308" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-13</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-13-70e8491f2a146347f1b6d423623d30fdd5ae606d239903de40c9ca2b96ff670a.mp3</guid><pubDate>Fri, 13 Nov 2026 02:25:49 GMT</pubDate><description>2026年11月13日，今天我们关注 GitHub 热门榜上的 AI 编程代理工具，以及它们在浏览器操作、安全审计、长期记忆和本地语音生成方面的最新进展。
+
+日榜中，Chrome 现代 Web 指南连续两天出现，它能让编码代理及时掌握最新的 Web 开发实践。Codex Security 则提供命令行工具和开发工具包，用于查找、验证并修复安全漏洞，适合希望把安全检查纳入开发流程的团队。
+
+到了周榜，Agent Browser 面向 AI 代理提供浏览器自动化能力，让代理能够直接操作网页。Cloudflare 安全审计技能则支持多阶段安全审计，输出经过独立验证、便于机器读取的结果，并连续两天同时出现在周榜和月榜。
+
+月榜中，Claude Mem 专注于代理的跨会话记忆，可以记录代理在会话中的操作，经压缩后把相关上下文注入后续任务。VoiceStudio 是一款完全本地运行的开源语音工具，支持语音克隆、语音设计、视频配音、听写、转录和有声书制作。
+
+整体来看，热门项目正在围绕代理的实际工作环境不断补齐能力，让 AI 不只会写代码，也能更可靠地使用浏览器、保持长期上下文并参与完整的安全与内容生产流程。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-13-70e8491f2a146347f1b6d423623d30fdd5ae606d239903de40c9ca2b96ff670a.mp3" length="1619700" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-12</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-12-8bec8a2c3354d7546957e6792a67efa7a7473f0ff0d0fd9765dde2410a504697.mp3</guid><pubDate>Thu, 12 Nov 2026 06:59:03 GMT</pubDate><description>2026年11月12日，今天我们关注 GitHub 热门榜上正在兴起的 AI 代理工具，以及围绕设计、安全、自动化和本地语音生成的开放项目。
+
+日榜中，meta/astryx 是一个完全可定制、面向智能代理优化的开源设计系统，适合希望快速搭建统一界面，并让设计规范能够被代理直接使用的团队。vercel-labs/agent-browser 则是面向 AI 代理的浏览器自动化工具，今天同时出现在日榜和周榜，可以让代理直接操作网页、完成抓取和测试等任务。homeassistant-ai/ha-mcp 则把 Claude、ChatGPT 等 AI 助手接入 Home Assistant，用来配置和自动化智能家居。
+
+周榜里，NVIDIA/auto-ontology 值得关注。它是一个基于 Python 的语义图谱推理框架，可以在数据之上构建更可解释的上下文层，帮助大语言模型和代理工作流生成确定性的查询。cloudflare/security-audit-skill 是一款多阶段安全审计技能，能够输出经过独立验证、便于机器读取的审计结果，并且同时出现在周榜和月榜。
+
+月榜中，thedotmack/claude-mem 专注于让智能代理保留跨会话上下文：记录代理在会话中的操作，再压缩并注入后续任务，让不同会话之间能够延续记忆。debpalash/VoiceStudio 则是完全本地运行的开源语音工具，支持语音克隆、语音设计、视频配音、听写、转录和有声书制作。
+
+从今天的榜单可以看到，热点正在从单纯调用模型，进一步转向让代理具备设计规范、浏览器操作、长期记忆、安全审计和本地内容生产能力，AI 工具链正在快速走向完整的工作环境。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-12-8bec8a2c3354d7546957e6792a67efa7a7473f0ff0d0fd9765dde2410a504697.mp3" length="2174964" type="audio/mpeg"/></item></channel></rss>

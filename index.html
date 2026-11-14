@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GitHub 热点日报</title>
+<link rel="alternate" type="application/rss+xml" title="GitHub 热点速播" href="feed.xml">
+<style>
+:root{font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1d1d1f;background:#f5f5f7}*{box-sizing:border-box}body{margin:0}main{max-width:1280px;margin:auto;padding:36px 24px 72px}h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.04em;margin:0}h2{font-size:20px;margin:0 0 14px}.sub,.meta{color:#74747a}.card{background:white;border:1px solid #e8e8ed;border-radius:18px;box-shadow:0 5px 24px #00000006;padding:22px;margin-top:20px}audio{width:100%;max-width:650px}a{color:#007aff;text-decoration:none}a:hover{text-decoration:underline}.links{display:flex;gap:18px;flex-wrap:wrap}.article{white-space:pre-wrap;line-height:1.85}.tabs{display:inline-flex;gap:3px;padding:4px;background:#f5f5f7;border-radius:13px}.tabs button{border:0;border-radius:10px;padding:8px 17px;background:transparent;color:#74747a;cursor:pointer;font:inherit}.tabs button[aria-selected=true]{background:white;color:#1d1d1f;box-shadow:0 1px 6px #0002}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}th{text-align:left;background:#f5f5f7;color:#74747a;font-weight:600}th,td{padding:13px;border-bottom:1px solid #ededf0;vertical-align:top}td:first-child{white-space:nowrap}td:nth-child(2){min-width:190px;font-weight:700;overflow-wrap:anywhere}td:last-child{min-width:260px;color:#74747a}.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.gain{color:#007aff}.status{color:#74747a;font-size:13px}button:focus-visible,a:focus-visible{outline:2px solid #007aff;outline-offset:3px}
+</style>
+<style>.tabs button[aria-pressed=true]{background:white;color:#1d1d1f;box-shadow:0 1px 6px #0002}</style>
+<style>
+.board-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.table-scroll table{table-layout:fixed;width:1080px;min-width:1080px}
+.table-scroll th,.table-scroll td{overflow-wrap:anywhere}
+@media(max-width:480px){main{padding:24px 14px 48px}.card{padding:16px}.tabs button{padding:8px 12px}}
+</style>
+<style>
+:root{color-scheme:light dark}
+@media (prefers-color-scheme:dark){
+ :root{background:#101114;color:#f2f2f7}
+ .sub,.meta,.status,td:last-child{color:#aeaeb8}
+ .card{background:#1c1c1e;border-color:#38383c;box-shadow:0 5px 24px #0004}
+ .tabs,th{background:#2c2c2e}
+ .tabs button,th{color:#b6b6bf}
+ .tabs button[aria-selected=true],.tabs button[aria-pressed=true]{background:#48484a;color:#fff;box-shadow:0 1px 6px #0006}
+ th,td{border-bottom-color:#38383c}
+ a,.gain{color:#70b7ff}
+ button:focus-visible,a:focus-visible{outline-color:#70b7ff}
+}
+</style>
+<main><header><p class="meta">GITHUB TRENDING · DAILY BRIEF</p><h1>GitHub 热点日报</h1><p class="sub">听见开源社区的新动向</p></header>
+<section class="card"><h2>最新一期</h2><audio controls preload="none" src="latest.mp3"></audio><p class="links"><a href="latest.mp3">下载音频</a><a href="feed.xml">订阅播客 RSS</a><a href="latest.md">查看文案</a><a href="history.json">历史数据</a></p><div id="article" class="article">正在加载文案…</div></section>
+<section class="card"><h2>热点榜单</h2><div class="board-toolbar"><div class="tabs" role="tablist" aria-label="榜单周期"><button role="tab" data-period="daily" aria-selected="true">每日</button><button role="tab" data-period="weekly" aria-selected="false">每周</button><button role="tab" data-period="monthly" aria-selected="false">每月</button></div><div class="tabs" aria-label="简介语言"><button type="button" data-locale="zh" aria-pressed="true">中文</button><button type="button" data-locale="original" aria-pressed="false">原文</button></div></div><p id="status" class="status" role="status">正在加载榜单…</p><div class="table-scroll"><table><colgroup><col style="width:65px"><col style="width:230px"><col style="width:110px"><col style="width:110px"><col style="width:115px"><col style="width:450px"></colgroup><thead><tr><th>排名</th><th>项目</th><th>语言</th><th class="num">总 Star</th><th class="num" id="gain-header">今日新增</th><th>简介</th></tr></thead><tbody id="rows"></tbody></table></div><p class="status">展示本次抓取到的全部项目，数量可能少于 GitHub 原榜；排序按抓取结果原始顺序。中文译文缺失时显示原文。</p></section></main>
+<script>
+(async function(){
+ const status=document.querySelector('#status'),rows=document.querySelector('#rows'),buttons=[...document.querySelectorAll('[data-period]')],locales=[...document.querySelectorAll('[data-locale]')],labels={daily:'今日新增',weekly:'本周新增',monthly:'本月新增'};let selectedPeriod='daily',selectedLocale='zh';
+ const fmt=value=>Number.isSafeInteger(value)?value.toLocaleString('en-US'):'—';
+ const cell=(tr,value,cls)=>{const td=document.createElement('td');td.textContent=value;td.className=cls||'';tr.append(td);return td};
+ try {const [a,h]=await Promise.all([fetch('latest.md',{cache:'no-cache'}),fetch('history.json',{cache:'no-cache'})]);if(!a.ok||!h.ok)throw Error('数据读取失败');document.querySelector('#article').textContent=await a.text();const data=await h.json(),day=data.days?.slice().sort((x,y)=>x.date.localeCompare(y.date)).at(-1);if(!day?.boards)throw Error('没有可用榜单');
+ function render(period){selectedPeriod=period;buttons.forEach(b=>b.setAttribute('aria-selected',String(b.dataset.period===period)));locales.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.locale===selectedLocale)));document.querySelector('#gain-header').textContent=labels[period];rows.replaceChildren();const items=day.boards[period];if(!Array.isArray(items))throw Error('榜单格式错误');status.textContent=day.date+' · '+items.length+' 个项目';items.forEach((item,i)=>{const tr=document.createElement('tr');cell(tr,String(i+1));const td=cell(tr,'');const link=document.createElement('a');try{const u=new URL(item.url);if(u.protocol!=='https:'||u.hostname!=='github.com')throw Error();link.href=u.href;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name;td.append(link)}catch{td.textContent=item.name}cell(tr,item.language||'—');cell(tr,fmt(item.stars),'num');cell(tr,fmt(item.starsToday),'num gain');const translated=day.descriptionsZh?.[period]?.[item.name];cell(tr,(selectedLocale==='zh'&&typeof translated==='string'&&translated.trim()?translated:item.description)||'暂无简介');rows.append(tr)})}
+ buttons.forEach(b=>b.addEventListener('click',()=>render(b.dataset.period)));locales.forEach(b=>b.addEventListener('click',()=>{selectedLocale=b.dataset.locale;render(selectedPeriod)}));render('daily');
+ }catch(e){status.textContent='榜单加载失败，请稍后刷新。';document.querySelector('#article').textContent='日报加载失败，请稍后刷新。';console.error(e)}
+})();
+</script></html>
