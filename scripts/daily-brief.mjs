@@ -34,11 +34,24 @@ days.push({ date: today, boards, descriptionsZh });
 days.sort ( (a, b) => a.date.localeCompare(b.date));
 
 async function post(endpoint, body) {
-  const response = await fetch(base + endpoint, { method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(180000) });
-  if (!response.ok) throw new Error(`MiniMax ${endpoint} HTTP ${response.status}`);
-  const json = await response.json();
-  if (json.base_resp?.status_code) throw new Error(`MiniMax ${endpoint} error ${json.base_resp.status_code}`);
-  return json;
+  const retryableStatuses = new Set([429, 500, 502, 503, 504, 529]);
+  const delays = [30_000, 60_000, 120_000];
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(base + endpoint, { method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(180000) });
+    if (!response.ok) {
+      if (!retryableStatuses.has(response.status) || attempt >= delays.length) {
+        throw new Error(`MiniMax ${endpoint} HTTP ${response.status}`);
+      }
+      await response.body?.cancel().catch(() => {});
+      const delay = delays[attempt];
+      console.warn(`MiniMax ${endpoint} HTTP ${response.status}，${delay / 1000} 秒后重试（${attempt + 1}/${delays.length}）`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      continue;
+    }
+    const json = await response.json();
+    if (json.base_resp?.status_code) throw new Error(`MiniMax ${endpoint} error ${json.base_resp.status_code}`);
+    return json;
+  }
 }
 const chat = await post('/v1/text/chatcompletion_v2', {
   model: process.env.MINIMAX_TEXT_MODEL || 'MiniMax-M2.7', max_tokens: 2500,
