@@ -1,7 +1,7 @@
 name: GitHub 热点语音日报
 on:
   schedule:
-    - cron: '0 22 * * *'
+    - cron: '7 18 * * *'
   workflow_dispatch:
 permissions: {}
 concurrency:
