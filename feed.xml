@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub 热点速播</title><link>https://aiurrefugee.github.io/dsh-github-trending/</link><description>每天用中文介绍 GitHub 热点项目。</description><language>zh-cn</language><atom:link href="https://aiurrefugee.github.io/dsh-github-trending/feed.xml" rel="self" type="application/rss+xml"/><item><title>GitHub 热点速播 · 2026-11-21</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-21-24fb8407da57e160a4e23c8368ac2ab5c5fec4e339fe116b95b57b2aa6f2831f.mp3</guid><pubDate>Fri, 20 Nov 2026 23:59:58 GMT</pubDate><description>今天是2026年11月21日，本期关注 GitHub 热门榜上正在走向成熟工作流的 AI 代理工具，重点看看安全审查、软件操作、知识获取、人机协作与长期记忆。
+
+日榜里，Claude BugHunter 是一套面向漏洞狩猎和外部红队工作的 Claude Code 技能包，覆盖多种常见漏洞类别，并加入企业身份和基础设施攻击矩阵，适合用于系统性的安全检查。它连续两天出现在日榜，也进入了月榜。Superpowers 则把代理技能框架与软件开发方法论结合起来，关注如何让编码代理按照更完整的流程参与开发；它也连续三天留在日榜。
+
+同样连续三天受到关注的 CLI Anything，目标是让更多软件具备代理原生能力，让 AI 代理能够通过命令行使用各种日常工具。Firecrawl 则补上了知识获取这一环，它通过统一接口搜索、抓取和访问众多数据来源，适合为代理构建更丰富的信息入口。
+
+来到周榜，Plannotator 是一处让人与代理保持同步的协作空间，支持制定计划、注释和审查代码、与团队共享进展，也能一键把反馈发送给代理。它同时出现在周榜和月榜，显示出人机协作正在成为独立工具类别。
+
+月榜中，Claude Mem 继续关注代理的跨会话记忆。它会记录代理在会话中的操作，经过压缩后再把相关上下文注入后续任务，让不同会话能够延续之前的工作。
+
+整体来看，热门项目正在从单纯生成内容，转向补齐安全检查、软件操作、知识获取、协作交付和持续记忆，AI 代理正逐步形成可落地的工作闭环。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-21-24fb8407da57e160a4e23c8368ac2ab5c5fec4e339fe116b95b57b2aa6f2831f.mp3" length="2115060" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-20</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-20-bd5d5229e886aa664b6055a77b7585fa182f64b6509c8af644918fbf17ca5ca7.mp3</guid><pubDate>Fri, 20 Nov 2026 00:36:26 GMT</pubDate><description>2026年11月20日，本期关注 GitHub 热门榜上正在走向成熟工作流的 AI 代理工具，重点看看安全审计、软件操作、团队协作和长期记忆。
+
+日榜中，Claude BugHunter 是一套面向漏洞狩猎和外部红队工作的 Claude Code 技能包，覆盖多种常见漏洞类别，还加入企业身份与基础设施攻击矩阵。它同时出现在月榜，适合用于系统性的安全检查。Superpowers 则把代理技能框架与软件开发方法论结合起来，关注如何让编码代理按照更完整的流程参与开发。CLI-Anything 的目标更直接，就是让更多软件具备代理原生能力，方便 AI 代理接入日常工具。
+
+到了周榜，Plannotator 是一处让人与代理保持同步的协作空间，支持制定计划、注释和审查代码、与团队分享进展，也能一键把反馈发送给代理。它近期同时出现在周榜和月榜，反映出人机协作正在成为独立工具类别。FFmpeg Skill 则把视频剪辑能力带到本地，提供剪切、字幕、画面重构、响度调整和平台导出等功能，不需要云端服务或接口密钥，适合希望由代理直接处理视频素材的用户。
+
+月榜中，Claude Mem 继续关注代理的跨会话记忆。它会记录代理在会话中的操作，经过压缩后再把相关上下文注入后续任务，让不同会话能够延续之前的工作。
+
+整体来看，热门项目正在从单纯生成内容，转向补齐安全检查、软件操作、协作交付和持续记忆，AI 代理正逐步形成可落地的工作闭环。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-20-bd5d5229e886aa664b6055a77b7585fa182f64b6509c8af644918fbf17ca5ca7.mp3" length="2037876" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-19</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-19-6a35420c04437a11af01c459e538f055bcd91b8d895a0204a9e24f737a39c99b.mp3</guid><pubDate>Thu, 19 Nov 2026 00:35:30 GMT</pubDate><description>2026年11月19日，今天我们关注 GitHub 热门榜上正在走向实用化的 AI 代理工具，重点看看软件操作、跨平台调研、科研写作、团队协作和视频制作。
+
+先看日榜。CLI-Anything 的目标很直接，就是让更多软件具备代理原生能力，让 AI 代理能够通过命令行使用各种工具。Last 30 Days Skill 则可以跨 Reddit、X、YouTube、Hacker News、Polymarket 和网页研究指定主题，再整理成有依据的摘要，适合做近期舆情和资料追踪。PaperOrchestra 是一个自动化科研论文写作的多代理框架，可以让多个代理协同完成研究论文，这类项目已经连续几天出现在日榜。
+
+到了周榜，Plannotator 是一处让人与代理保持同步的协作空间，支持制定计划、注释和审查代码、与团队共享进展，也能一键把反馈发送给代理。它持续受到关注，也进入了月榜。Anthropic 的 Agent Skills 公共仓库同样在周榜和月榜中持续出现，为开发者提供可复用的代理技能资源。
+
+月榜里，HyperFrames 把 AI 视频进一步做成可以真正编辑的开源项目。用户描述视频需求后，得到的是能够继续修改、调整到具体帧的项目，而不是只能播放的生成结果。
+
+整体来看，热门项目正在从单纯生成内容，转向让代理更可靠地操作软件、搜集证据、协作交付并制作可编辑成果，AI 代理正在补齐真正进入工作流程所需的能力。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-19-6a35420c04437a11af01c459e538f055bcd91b8d895a0204a9e24f737a39c99b.mp3" length="1924980" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-18</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-18-666cf0aa68f57fe6a00c4feeb96a24d9a1e0fcba3152fa482d8abb8f079be3ee.mp3</guid><pubDate>Tue, 17 Nov 2026 23:01:45 GMT</pubDate><description>2026年11月18日，本期关注 GitHub 热门榜上正在深入实际工作流的 AI 代理工具。
+
+先看日榜，Claude BugHunter 是一套面向漏洞狩猎和外部红队工作的技能包，覆盖多种常见漏洞类别，并加入企业身份和基础设施攻击矩阵，适合用于系统性的安全检查。阿里巴巴的 Open Code Review 则把确定性检查流程与大语言模型代理结合起来，能够给出精确到代码行的评论，并覆盖空指针、线程安全、跨站脚本和 SQL 注入等常见问题，它也进入了本周热门项目。腾讯的 LoopForge 关注代理的交付流程，它支持自托管，并通过脚本和人工审批节点来编排多种编程代理。
+
+到了周榜，Agent Browser 为 AI 代理提供浏览器自动化命令行工具，让代理能够直接操作网页，这个项目同时出现在月榜。Chrome DevTools MCP 则把 Chrome 开发工具接入编码代理，适合需要借助真实浏览器环境进行检查和调试的场景。
+
+月榜里，Claude Mem 专注于代理的跨会话记忆，可以记录代理在会话中的操作，经过压缩后再把相关上下文注入后续任务。Cloudflare 的安全审计技能也值得关注，它采用多阶段审计流程，并输出经过独立验证、便于机器读取的结果。
+
+整体来看，热门项目正在围绕安全审查、交付流程、浏览器操作和长期记忆持续补齐能力，AI 代理正在从单一任务助手走向更完整的工程协作体系。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-18-666cf0aa68f57fe6a00c4feeb96a24d9a1e0fcba3152fa482d8abb8f079be3ee.mp3" length="1886964" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-17</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-17-3ac418bbc10d6920093f648d3cb29b1faa2acbbfe2c76b2831b6bc236a6eda9b.mp3</guid><pubDate>Tue, 17 Nov 2026 04:22:57 GMT</pubDate><description>今天是2026年11月17日，本期关注 GitHub 热门榜上正在深入真实工作流的 AI 代理工具。
+
+日榜里，AG-UI 连续两天受到关注。它是一套代理与用户交互协议，目标是让 AI 代理能够接入前端应用，为人机交互提供统一接口。Univer 同样连续两天在日榜出现，它提供面向人和 AI 代理的开放办公能力，可以把文档编辑、表格计算、协作和文件处理集成进自己的产品。
+
+Plannotator 则同时出现在日榜和周榜，它是一处让人与代理保持同步的协作空间，支持制定计划、注释和审查代码、与团队共享进展，也能一键把反馈发送给代理。
+
+到了周榜，Meta 的 Astryx 已经连续三天出现。这是一个完全可定制、面向代理优化的开源设计系统，适合希望统一界面规范，并让设计规则能够被 AI 代理直接使用的团队。Anthropic 的代理技能公开库也持续出现在周榜和月榜，为开发者提供可复用的代理技能资源。
+
+月榜中，Cloudflare 的安全审计技能已经连续多天同时进入周榜和月榜。它支持多阶段安全审计，并提供经过独立验证、便于机器读取的结果，适合希望把安全检查纳入代理开发流程的团队。
+
+整体来看，热门项目正在从单纯生成代码，继续扩展到交互协议、办公协作、设计系统、长期技能积累和安全审计，AI 代理的工具链正在变得更加完整。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-17-3ac418bbc10d6920093f648d3cb29b1faa2acbbfe2c76b2831b6bc236a6eda9b.mp3" length="1860468" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-17</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-17-51c72b594b5505f67b13cd4009b9852e5d5b151293c224436fc7d129f34a8ec6.mp3</guid><pubDate>Tue, 17 Nov 2026 00:08:32 GMT</pubDate><description>2026年11月17日，今天我们关注 GitHub 热门榜上的 AI 代理项目，重点看看代理如何融入前端应用、办公协作、代码审查、浏览器操作和长期记忆。
+
+先看日榜，AG-UI 是一套代理与用户的交互协议，目标是把 AI 代理接入前端应用，让人和代理能够在产品界面中更自然地协作。
+
+Plannotator 则更像一个人机协作工作区，支持制定计划、注释和审查代码、与团队共享进展，还能一键把反馈发送给代理。它连续四天出现在日榜，今天也同时出现在周榜和月榜。Univer 也在连续关注中，它提供办公能力开发套件，可以把编辑、计算、协作和文件处理集成到自己的产品中，适合构建同时面向用户和 AI 代理的智能办公平台。
+
+来到周榜，Open Code Review 值得关注。它把确定性检查流程与大语言模型代理结合起来，能够给出精确到代码行的评论，并覆盖空指针、线程安全、跨站脚本和 SQL 注入等常见问题。Agent Browser 则是面向 AI 代理的浏览器自动化命令行工具，为代理操作网页提供统一入口，今天也进入了月榜。
+
+月榜中，Claude Mem 关注的是代理的跨会话记忆。它会记录代理在会话中的操作，经过压缩后把相关上下文注入后续任务，让不同会话之间能够延续工作。
+
+整体来看，本期趋势非常清晰，热门项目正在补齐 AI 代理从交互入口、协作流程到审查、操作和记忆的完整工作链路。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-17-51c72b594b5505f67b13cd4009b9852e5d5b151293c224436fc7d129f34a8ec6.mp3" length="1970484" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-16</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-16-395da179cc58f0ce1689f60573c6e6b0296c44f2fd468078575bdb1d0b12a31b.mp3</guid><pubDate>Mon, 16 Nov 2026 03:13:42 GMT</pubDate><description>2026年11月16日，今天我们关注 GitHub 热门榜上正在加速融入真实业务的 AI 代理工具，重点看看办公协作、前端交互、设计规范、网页操作和长期记忆。
+
+日榜中，Univer 带来了一套面向人和 AI 代理的开放办公能力，可将编辑、计算、协作和文件处理集成到自己的产品中，适合搭建智能办公平台。AG-UI 则是代理与用户之间的交互协议，目标是把 AI 代理接入前端应用，让代理能力更自然地出现在产品界面里。
+
+Plannotator 是一个让人与代理保持同步的协作工作区，支持制定计划、注释和审查代码、与团队共享进展，也能一键把反馈发送给代理。它今天同时出现在日榜和周榜，适合关注人机协作流程的团队。
+
+来到周榜，Meta 的 Astryx 是一个完全可定制、面向代理优化的开源设计系统，适合需要统一界面规范，并希望设计规则能够直接被智能代理使用的团队，它已连续两天进入周榜。Agent Browser 同样值得关注，它为 AI 代理提供浏览器自动化命令行工具，让代理能够直接操作网页，适用于抓取、测试等依赖真实浏览器环境的任务，并且同时出现在周榜和月榜。
+
+月榜中，Claude Mem 专注于代理的跨会话记忆。它会记录代理在会话中的操作，再压缩并注入后续任务，让不同会话能够延续上下文。
+
+整体来看，热门项目正在从单纯生成代码，转向让代理深入办公、设计、网页操作和持续协作，AI 工具链正加速进入更完整的实际工作环境。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-16-395da179cc58f0ce1689f60573c6e6b0296c44f2fd468078575bdb1d0b12a31b.mp3" length="2031540" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-15</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-15-e313aee30dea7539ce8c253f5e9c60cac1cb9c02bdacb0fc18c228835d16a311.mp3</guid><pubDate>Sun, 15 Nov 2026 01:33:38 GMT</pubDate><description>今天是2026年11月15日，本期关注 GitHub 热门榜上正在走向真实工作流的 AI 代理工具。
+
+先看日榜，Plannotator 是一个让人和代理保持同步的协作工作台，支持制定计划、注释和审查代码、与团队共享，并把反馈一键发给代理。Chrome 现代 Web 指南则帮助编码代理及时掌握最新的网页开发实践，这几天持续出现在日榜。阿里巴巴的 Open Code Review 也在继续受到关注，它结合确定性规则与大语言模型代理进行代码审查，既能给出精确到代码行的意见，也覆盖空指针、线程安全、跨站脚本和 SQL 注入等常见风险。
+
+来到周榜，Meta 的 Astryx 是一个完全可定制、面向代理优化的开源设计系统，适合需要统一界面规范，并希望设计规则能够直接被智能代理使用的团队。Agent Browser 同样值得关注，它为 AI 代理提供浏览器自动化能力，让代理能够直接操作网页，适用于抓取、测试等需要真实浏览器环境的任务。
+
+放到月榜，Claude Mem 关注的是代理的跨会话记忆，可以记录会话中的操作，压缩后把相关上下文注入后续任务。这个项目持续受到关注，说明代理如何记住并延续工作，正在成为热门方向。新进入月榜的 Video Shotcraft 则面向 Claude Code 和 Codex，提供可编辑的电影感产品宣传片制作能力，并支持节拍同步、声音设计以及导出到剪映。
+
+整体来看，热门项目正在从单纯的代码生成，扩展到协作规划、代码审查、网页操作、长期记忆和多媒体制作，AI 代理正在加速进入更完整的实际工作环境。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-15-e313aee30dea7539ce8c253f5e9c60cac1cb9c02bdacb0fc18c228835d16a311.mp3" length="2119668" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-14</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-14-2ba5f32a7bed329f10bcc873cf0cb92e784562f9e4fcf82ddd74aea51071c249.mp3</guid><pubDate>Sat, 14 Nov 2026 02:01:02 GMT</pubDate><description>2026年11月14日，今天我们关注 GitHub 热门榜上正在完善的 AI 代理工作流，以及代码审查、浏览器操作和长期记忆等实用工具。
+
+日榜中，阿里巴巴的 open-code-review 值得关注。它采用确定性流程结合大语言模型代理进行代码审查，可给出精确到代码行的评论，并内置空指针、线程安全、跨站脚本和 SQL 注入等多语言规则。Chrome 现代 Web 指南则帮助编码代理掌握最新的 Web 开发实践，过去几天持续出现在日榜。Codex Security 同样保持关注，它提供命令行工具和开发工具包，用于发现、验证并修复安全漏洞。
+
+日榜和周榜同时出现了 daily_stock_analysis。这是一套由大语言模型驱动的多市场股票分析系统，整合多来源行情、实时新闻、决策看板和自动推送，也支持定时运行，适合搭建个人投研工作流。
+
+到了周榜，Agent Browser 专注于代理的浏览器自动化，让代理能够直接操作网页；它同时进入了月榜。Cloudflare 安全审计技能则支持多阶段审计，并输出经过独立验证、便于机器读取的结果，过去几天持续出现在周榜和月榜。
+
+月榜中的 Claude Mem 专注于跨会话记忆。它会记录代理在会话中的操作，再经过压缩，将相关上下文注入后续任务，帮助不同会话延续工作。
+
+整体来看，热门项目的重点正从单纯生成代码，转向让代理具备更可靠的审查、操作、记忆和上下文能力，AI 工具链正在加速融入真实的软件工作流程。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-14-2ba5f32a7bed329f10bcc873cf0cb92e784562f9e4fcf82ddd74aea51071c249.mp3" length="2056308" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-13</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-13-70e8491f2a146347f1b6d423623d30fdd5ae606d239903de40c9ca2b96ff670a.mp3</guid><pubDate>Fri, 13 Nov 2026 02:25:49 GMT</pubDate><description>2026年11月13日，今天我们关注 GitHub 热门榜上的 AI 编程代理工具，以及它们在浏览器操作、安全审计、长期记忆和本地语音生成方面的最新进展。
+
+日榜中，Chrome 现代 Web 指南连续两天出现，它能让编码代理及时掌握最新的 Web 开发实践。Codex Security 则提供命令行工具和开发工具包，用于查找、验证并修复安全漏洞，适合希望把安全检查纳入开发流程的团队。
+
+到了周榜，Agent Browser 面向 AI 代理提供浏览器自动化能力，让代理能够直接操作网页。Cloudflare 安全审计技能则支持多阶段安全审计，输出经过独立验证、便于机器读取的结果，并连续两天同时出现在周榜和月榜。
+
+月榜中，Claude Mem 专注于代理的跨会话记忆，可以记录代理在会话中的操作，经压缩后把相关上下文注入后续任务。VoiceStudio 是一款完全本地运行的开源语音工具，支持语音克隆、语音设计、视频配音、听写、转录和有声书制作。
+
+整体来看，热门项目正在围绕代理的实际工作环境不断补齐能力，让 AI 不只会写代码，也能更可靠地使用浏览器、保持长期上下文并参与完整的安全与内容生产流程。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-13-70e8491f2a146347f1b6d423623d30fdd5ae606d239903de40c9ca2b96ff670a.mp3" length="1619700" type="audio/mpeg"/></item>
+<item><title>GitHub 热点速播 · 2026-11-12</title><guid isPermaLink="false">https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-12-8bec8a2c3354d7546957e6792a67efa7a7473f0ff0d0fd9765dde2410a504697.mp3</guid><pubDate>Thu, 12 Nov 2026 06:59:03 GMT</pubDate><description>2026年11月12日，今天我们关注 GitHub 热门榜上正在兴起的 AI 代理工具，以及围绕设计、安全、自动化和本地语音生成的开放项目。
+
+日榜中，meta/astryx 是一个完全可定制、面向智能代理优化的开源设计系统，适合希望快速搭建统一界面，并让设计规范能够被代理直接使用的团队。vercel-labs/agent-browser 则是面向 AI 代理的浏览器自动化工具，今天同时出现在日榜和周榜，可以让代理直接操作网页、完成抓取和测试等任务。homeassistant-ai/ha-mcp 则把 Claude、ChatGPT 等 AI 助手接入 Home Assistant，用来配置和自动化智能家居。
+
+周榜里，NVIDIA/auto-ontology 值得关注。它是一个基于 Python 的语义图谱推理框架，可以在数据之上构建更可解释的上下文层，帮助大语言模型和代理工作流生成确定性的查询。cloudflare/security-audit-skill 是一款多阶段安全审计技能，能够输出经过独立验证、便于机器读取的审计结果，并且同时出现在周榜和月榜。
+
+月榜中，thedotmack/claude-mem 专注于让智能代理保留跨会话上下文：记录代理在会话中的操作，再压缩并注入后续任务，让不同会话之间能够延续记忆。debpalash/VoiceStudio 则是完全本地运行的开源语音工具，支持语音克隆、语音设计、视频配音、听写、转录和有声书制作。
+
+从今天的榜单可以看到，热点正在从单纯调用模型，进一步转向让代理具备设计规范、浏览器操作、长期记忆、安全审计和本地内容生产能力，AI 工具链正在快速走向完整的工作环境。</description><enclosure url="https://aiurrefugee.github.io/dsh-github-trending/episodes/2026-11-12-8bec8a2c3354d7546957e6792a67efa7a7473f0ff0d0fd9765dde2410a504697.mp3" length="2174964" type="audio/mpeg"/></item></channel></rss>
